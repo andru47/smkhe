@@ -9,6 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - name: Downlaod MPFR and Install
+      run: wget "https://www.mpfr.org/mpfr-current/mpfr-4.1.0.zip" && unzip mpfr-4.1.0.zip && 
+        cd mpfr-4.1.0 && ./configure && sudo make install
+    
     - name: Download Eigen3 and Install
       run: git clone https://gitlab.com/libeigen/eigen.git &&
         cd eigen && pwd && git checkout 3.4 && cmake -B build && cd build &&
