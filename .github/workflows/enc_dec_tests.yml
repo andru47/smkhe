@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Download Eigen3 and Install
-      run: git clone https://gitlab.com/libeigen/eigen.git |
+      run: git clone https://gitlab.com/libeigen/eigen.git &&
         cd eigen && pwd && git checkout 3.4 && cmake -B build && cd build &&
         sudo make install
 
