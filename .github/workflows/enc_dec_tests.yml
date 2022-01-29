@@ -11,7 +11,7 @@ jobs:
     
     - name: Download Eigen3 and Install
       run: git clone https://gitlab.com/libeigen/eigen.git |
-        cd eigen | git checkout 3.4 | cmake -B build | cd build |
+        cd eigen && pwd && git checkout 3.4 && cmake -B build && cd build &&
         sudo make install
 
     - name: Configure CMake
