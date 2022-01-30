@@ -1,24 +1,20 @@
-#include "flint/fmpz_mod_polyxx.h"
-#include "Eigen/Core"
+#include "smkhe/math/polynomial.h"
 #include "smkhe/parameters.h"
+#include <complex>
 
 #ifndef SMKHE_PLAINTEXT_H
 #define SMKHE_PLAINTEXT_H
 
-using namespace flint;
-using namespace Eigen;
-
 class Plaintext {
-    fmpz_polyxx polynomial;
+    Polynomial<long long> polynomial;
     Parameters parameters;
 
 public:
-    Plaintext(VectorXcd &givenCoefficients, Parameters &parameters);
+    Plaintext(vector<complex<double>> &givenCoefficients, Parameters &parameters);
 
-    VectorXcd getVectorPolynomial();
+    Polynomial<long long> getPolynomial();
 
     void add(Plaintext &otherPlain);
 };
-
 
 #endif //SMKHE_PLAINTEXT_H

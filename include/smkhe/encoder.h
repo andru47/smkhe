@@ -1,22 +1,20 @@
 #include "smkhe/parameters.h"
 #include "smkhe/plaintext.h"
-#include "Eigen/Core"
 
 #ifndef SMKHE_ENCODER_H
 #define SMKHE_ENCODER_H
 
-using namespace Eigen;
 using namespace std;
 
 class Encoder {
     Parameters parameters;
-    vector<dcomplex> rootAtPower;
+    vector<complex<double>> rootAtPower;
     vector<int> indexHash;
 
 public:
     Encoder(Parameters &givenParameters);
 
-    Plaintext encode(vector<dcomplex> toEncode);
+    Plaintext encode(vector<complex<double>> toEncode);
 
     Plaintext encode(vector<double> toEncode);
 
@@ -24,8 +22,7 @@ public:
 
     Parameters getParameters();
 
-    vector<dcomplex> decode(Plaintext &givenPlaintext);
+    vector<complex<double>> decode(Plaintext &givenPlaintext);
 };
-
 
 #endif //SMKHE_ENCODER_H

@@ -22,7 +22,7 @@ TEST(Encoder, EncodeAndDecodeWithValidParams) {
     Encoder enc(parameters);
     vector<double> numbers = generateDoubles(8192);
     Plaintext returnedPlaintex = enc.encode(numbers);
-    vector<dcomplex> newNumbers = enc.decode(returnedPlaintex);
+    vector<complex<double>> newNumbers = enc.decode(returnedPlaintex);
 
     for (int index = 0; index < 8192; ++index) {
         ASSERT_NEAR(numbers[index], newNumbers[index].real(), 1e-8);

@@ -19,5 +19,4 @@ public:
     bool operator==(const Parameters);
 };
 
-
 #endif //SMKHE_PARAMETERS_H
