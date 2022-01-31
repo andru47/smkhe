@@ -1,0 +1,20 @@
+name: Encoder & Decoder Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build
+
+    - name: Build
+      run: cd ${{github.workspace}}/build && make
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ./tests
