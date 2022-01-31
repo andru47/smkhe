@@ -52,7 +52,6 @@ void fftDecode(vector<complex<double>> &valuesToDecode, vector<int> &indexHash, 
     }
 }
 
-
 void inverseFFTEncode(vector<complex<double>> &valuesToEncode, vector<int> &indexHash,
                       vector<complex<double>> &rootAtPower) {
     int N = valuesToEncode.size();
@@ -78,8 +77,8 @@ void inverseFFTEncode(vector<complex<double>> &valuesToEncode, vector<int> &inde
     bitReverse(valuesToEncode);
 }
 
-vector<complex<double>>
-tauInverse(vector<complex<double>> &givenValues, vector<int> &indexHash, vector<complex<double>> &rootAtPower) {
+vector<complex<double>> tauInverse(vector<complex<double>> &givenValues, vector<int> &indexHash,
+                                   vector<complex<double>> &rootAtPower) {
     vector<complex<double>> res(givenValues.size() * 2);
 
     vector<complex<double>> fftVec(givenValues.size());
@@ -97,8 +96,8 @@ tauInverse(vector<complex<double>> &givenValues, vector<int> &indexHash, vector<
     return res;
 }
 
-vector<complex<double>>
-tau(vector<complex<double>> &givenPolynomial, vector<int> &indexHash, vector<complex<double>> &rootAtPower) {
+vector<complex<double>> tau(vector<complex<double>> &givenPolynomial, vector<int> &indexHash,
+                            vector<complex<double>> &rootAtPower) {
     static complex<double> i(0, 1);
     vector<complex<double>> mCombined(givenPolynomial.size() / 2);
 
