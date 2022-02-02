@@ -1,20 +1,24 @@
 #include "smkhe/math/polynomial.h"
 #include "smkhe/parameters.h"
-#include <complex>
+
+using namespace std;
 
 #ifndef SMKHE_PLAINTEXT_H
 #define SMKHE_PLAINTEXT_H
 
 class Plaintext {
-    Polynomial<long long> polynomial;
+    vector<Polynomial<uint64_t>> polynomials;
     Parameters parameters;
+    int currentLevel = 0;
 
 public:
-    Plaintext(vector<complex<double>> &givenCoefficients, Parameters &parameters);
+    Plaintext(vector<vector<uint64_t>> &givenCoefficients, Parameters &parameters);
 
-    Polynomial<long long> getPolynomial();
+    Polynomial<uint64_t> &getPolynomial(int modIndex);
 
-    void add(Plaintext &otherPlain);
+    void add(Plaintext &otherPlain, int modulusLevel);
+
+    int getLevel();
 };
 
 #endif //SMKHE_PLAINTEXT_H

@@ -3,8 +3,8 @@ project(smkhe)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCE_FILES src/encoder.cpp src/plaintext.cpp src/parameters.cpp)
-set(TEST_FILES test/encoder.cpp)
+set(SOURCE_FILES src/encoder.cpp src/plaintext.cpp src/parameters.cpp src/public_key.cpp src/secret_key.cpp src/encryptor.cpp src/math/ntt_transformer.cpp include/smkhe/math/ntt_transformer.h)
+set(TEST_FILES test/encoder.cpp test/math/ntt_transformer.cpp)
 
 add_library(smkhe SHARED ${SOURCE_FILES})
 

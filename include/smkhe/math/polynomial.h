@@ -9,6 +9,8 @@ template<typename T>
 class Polynomial {
     int degree;
     vector<T> coeffs;
+    bool transformedToNTT = false;
+
 public:
     Polynomial(int degree, vector<T> givenCoeffs) : degree(degree), coeffs(givenCoeffs) {
         if (degree != givenCoeffs.size()) {
@@ -34,6 +36,14 @@ public:
         coeffs[pos] = value;
     }
 
+    bool isTransformedToNTT() {
+        return transformedToNTT;
+    }
+
+    void setTransformedToNTT(bool transformed) {
+        transformedToNTT = transformed;
+    }
+
     T getCoeff(int index) {
         if (index >= degree) {
             throw ("Index out of bounds");
@@ -41,7 +51,7 @@ public:
         return coeffs[index];
     }
 
-    vector<T> getCoeffs() {
+    vector<T> &getCoeffs() {
         return this->coeffs;
     }
 

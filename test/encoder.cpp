@@ -3,6 +3,7 @@
 #include <random>
 
 #define SEED 1231121
+#define BIG_PRIME 1152921504606748673
 using namespace std;
 
 vector<double> generateDoubles(int number) {
@@ -18,7 +19,7 @@ vector<double> generateDoubles(int number) {
 }
 
 TEST(Encoder, EncodeAndDecodeWithValidParams) {
-    Parameters parameters(pow(2.0, 40), 16384);
+    Parameters parameters(pow(2.0, 40), 16384, {BIG_PRIME});
     Encoder enc(parameters);
     vector<double> numbers = generateDoubles(8192);
     Plaintext returnedPlaintex = enc.encode(numbers);

@@ -2,27 +2,56 @@
 #include <vector>
 #include <random>
 
-void scaleUp(vector<complex<double>> &vector, double scale) {
-    for (auto &elem: vector) {
-        elem *= scale;
+void randomRound(complex<double> &realCoeffs) {
+    static random_device rd;
+    static mt19937 generator(rd());
+    double weight = realCoeffs.real() - floor(realCoeffs.real());
+    auto distribution = binomial_distribution(1, weight);
+    long long integerCoefficient = floor(realCoeffs.real()) + distribution(generator);
+    realCoeffs.real(integerCoefficient);
+    realCoeffs.imag(0);
+}
+
+void scaleUp(vector<complex<double>> &vec, vector<uint64_t> &dest, double scale, uint64_t mod) {
+    for (int i = 0; i < vec.size(); ++i) {
+        vec[i] *= scale;
+        randomRound(vec[i]);
+        if (vec[i].real() < 0) {
+            vec[i].real(mod + (llround((vec[i].real()))));
+        } else {
+            vec[i].real(llround((vec[i].real())) % mod);
+        }
+        dest[i] = vec[i].real();
     }
 }
 
-void scaleDown(vector<complex<double>> &vector, double scale) {
-    for (auto &elem: vector) {
-        elem /= scale;
+void scaleDown(vector<uint64_t> &vec, vector<complex<double>> &dest, double scale, uint64_t mod) {
+    for (int i = 0; i < vec.size(); ++i) {
+        complex<double> val;
+        bool sign = false;
+        if (vec[i] >= mod / 2) {
+            vec[i] = mod - vec[i];
+            sign = true;
+        }
+        val.real((vec[i] * 1.0) / scale);
+        if (sign) {
+            val.real(-val.real());
+        }
+        dest[i] = val;
     }
 }
 
 void bitReverse(vector<complex<double>> &vec) {
     int n = vec.size();
+    int bits = log2(n);
     for (uint32_t i = 0; i < n; ++i) {
         uint32_t ci = i;
         uint32_t bitReversedI = 0;
-        uint32_t currentPos = 0;
+        uint32_t currentPos = bits - 1;
         while (ci) {
-            bitReversedI |= (currentPos << (ci & 1));
+            bitReversedI |= ((ci & 1) << currentPos);
             ci >>= 1;
+            currentPos--;
         }
         if (i < bitReversedI) {
             swap(vec[i], vec[bitReversedI]);
@@ -134,30 +163,20 @@ void Encoder::setParameters(Parameters &givenParameters) {
     this->parameters = givenParameters;
 }
 
-void randomRound(vector<complex<double>> &realCoeffs) {
-    static random_device rd;
-    static mt19937 generator(rd());
-    for (int index = 0; index < realCoeffs.size(); ++index) {
-        double weight = realCoeffs[index].real() - floor(realCoeffs[index].real());
-        auto distribution = binomial_distribution(1, weight);
-        long long integerCoefficient = floor(realCoeffs[index].real()) + distribution(generator);
-        realCoeffs[index].real(integerCoefficient);
-        realCoeffs[index].imag(0);
-    }
-}
-
 Plaintext Encoder::encode(vector<complex<double>> toEncode) {
     if (toEncode.size() > parameters.getRingDegree() / 2) {
         throw ("There are more values to encode than slots: can only encode parameters.getRingDegree() / 2");
     }
 
-    scaleUp(toEncode, parameters.getScale());
     toEncode.resize(parameters.getRingDegree() / 2, complex<double>(0, 0));
 
     auto realCoeffs = tauInverse(toEncode, indexHash, rootAtPower);
-    randomRound(realCoeffs);
+    vector<vector<uint64_t>> allCoeffs(parameters.getModulusLevels(), vector<uint64_t>(realCoeffs.size()));
+    for (int level = 0; level < allCoeffs.size(); ++level) {
+        scaleUp(realCoeffs, allCoeffs[level], parameters.getScale(), parameters.getModulus(level));
+    }
 
-    return Plaintext(realCoeffs, parameters);
+    return Plaintext(allCoeffs, parameters);
 }
 
 Plaintext Encoder::encode(vector<double> toEncode) {
@@ -167,14 +186,10 @@ Plaintext Encoder::encode(vector<double> toEncode) {
 }
 
 vector<complex<double>> Encoder::decode(Plaintext &givenPlaintext) {
-    vector<long long> coeffs = givenPlaintext.getPolynomial().getCoeffs();
+    vector<uint64_t> coeffs = givenPlaintext.getPolynomial(givenPlaintext.getLevel()).getCoeffs();
     vector<complex<double>> givenVector(coeffs.size());
 
-    for (int index = 0; index < coeffs.size(); ++index) {
-        givenVector[index] = complex<double>(coeffs[index]);
-    }
-
+    scaleDown(coeffs, givenVector, parameters.getScale(), parameters.getModulus(givenPlaintext.getLevel()));
     vector<complex<double>> result = tau(givenVector, indexHash, rootAtPower);
-    scaleDown(result, parameters.getScale());
     return result;
 }
