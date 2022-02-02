@@ -13,7 +13,7 @@ jobs:
       run: cmake -B ${{github.workspace}}/build
 
     - name: Build
-      run: cd ${{github.workspace}}/build && make
+      run: cd ${{github.workspace}}/build && make -j4
 
     - name: Test
       working-directory: ${{github.workspace}}/build
