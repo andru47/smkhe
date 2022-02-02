@@ -3,6 +3,7 @@
 //
 #include "smkhe/math/polynomial.h"
 #include "smkhe/parameters.h"
+#include <cstdint>
 
 #ifndef SMKHE_SECRET_KEY_H
 #define SMKHE_SECRET_KEY_H

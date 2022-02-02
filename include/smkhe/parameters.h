@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstdint>
 
 using namespace std;
 #ifndef SMKHE_PARAMETERS_H

@@ -1,5 +1,6 @@
 #include "smkhe/math/polynomial.h"
 #include "smkhe/parameters.h"
+#include <cstdint>
 
 using namespace std;
 

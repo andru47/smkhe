@@ -1,5 +1,6 @@
 #include "smkhe/parameters.h"
 #include "smkhe/plaintext.h"
+#include <cstdint>
 #include <complex>
 
 #ifndef SMKHE_ENCODER_H

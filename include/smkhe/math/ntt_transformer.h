@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstdint>
 #include "smkhe/math/polynomial.h"
 #include "smkhe/parameters.h"
 
