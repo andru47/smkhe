@@ -1,6 +1,7 @@
 #include "smkhe/encoder.h"
 #include <vector>
 #include <random>
+#include <cmath>
 
 void randomRound(complex<double> &realCoeffs) {
     static random_device rd;

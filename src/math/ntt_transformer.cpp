@@ -1,5 +1,7 @@
 #include "smkhe/math/ntt_transformer.h"
 #include <numeric>
+#include <random>
+#include <cmath>
 
 static vector<uint64_t> smallPrimes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73,
                                        79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163,
@@ -139,7 +141,7 @@ uint64_t pollardF(uint64_t number, uint64_t constant, uint64_t mod) {
 
 uint64_t pollardRho(uint64_t toFactorize) {
     uint64_t x = 2, y = 2, divisor = 1;
-    uint64_t constant = (rand() % 10) + 1;
+    uint64_t constant = (random() % 10) + 1;
     while (divisor == 1) {
         x = pollardF(x, constant, toFactorize);
         y = pollardF(pollardF(y, constant, toFactorize), constant, toFactorize);
