@@ -1,20 +1,18 @@
-#include <vector>
-#include <cstdint>
+#include "smkhe/util.h"
 #include "smkhe/math/polynomial.h"
-#include "smkhe/parameters.h"
+
+using namespace std;
 
 #ifndef SMKHE_NTT_TRANSFORMER_H
 #define SMKHE_NTT_TRANSFORMER_H
 
-using namespace std;
-
 class NTTTransformer {
-    Parameters parameters;
-    vector<uint64_t> NInvs;
+    int N;
+    vector<uint64_t> primes, NInvs;
     vector<vector<uint64_t>> rootPowers, inverseRootPowers;
     vector<vector<uint64_t>> psi, psiInverse;
 public:
-    explicit NTTTransformer(Parameters parameters);
+    NTTTransformer(int ringDegree, vector<uint64_t> primes);
 
     void toNTT(Polynomial<uint64_t> &poly, int level);
 

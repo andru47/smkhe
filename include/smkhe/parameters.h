@@ -1,15 +1,16 @@
-#include <vector>
-#include <cstdint>
+#include "smkhe/util.h"
+#include "smkhe/math/ntt_transformer.h"
 
-using namespace std;
 #ifndef SMKHE_PARAMETERS_H
 #define SMKHE_PARAMETERS_H
 
+using namespace std;
 
 class Parameters {
     double scale;
     int ringDegree;
     vector<uint64_t> primes;
+    NTTTransformer transformer;
 
 public:
     Parameters(double scale, int ringDegree, vector<uint64_t> primes);
@@ -28,7 +29,9 @@ public:
 
     bool operator==(const Parameters);
 
-    vector<uint64_t> getPrimes();
+    vector<uint64_t> &getPrimes();
+
+    NTTTransformer &getTransformer();
 };
 
 #endif //SMKHE_PARAMETERS_H

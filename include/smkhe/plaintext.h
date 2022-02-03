@@ -1,6 +1,6 @@
 #include "smkhe/math/polynomial.h"
 #include "smkhe/parameters.h"
-#include <cstdint>
+#include "smkhe/util.h"
 
 using namespace std;
 
@@ -14,6 +14,8 @@ class Plaintext {
 
 public:
     Plaintext(vector<vector<uint64_t>> &givenCoefficients, Parameters &parameters);
+
+    Plaintext(vector<Polynomial<uint64_t>> polynomials, Parameters params, int level);
 
     Polynomial<uint64_t> &getPolynomial(int modIndex);
 

@@ -79,59 +79,6 @@ static vector<uint64_t> smallPrimes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 3
                                        7793, 7817, 7823, 7829, 7841, 7853, 7867, 7873, 7877, 7879, 7883, 7901, 7907,
                                        7919};
 
-
-uint64_t modMultiply(uint64_t a, uint64_t b, uint64_t mod) {
-    uint64_t result = 0;
-
-    while (b) {
-        if (b % 2) {
-            result = (result + a) % mod;
-            b -= 1;
-        }
-        a = (a + a) % mod;
-        b >>= 1;
-    }
-
-
-    return result;
-}
-
-uint64_t modAdd(uint64_t a, uint64_t b, uint64_t mod) {
-    return (a + b) % mod;
-}
-
-uint64_t fastExp(uint64_t base, uint64_t exponent, uint64_t mod) {
-    if (!exponent) {
-        return 1;
-    }
-    if (exponent == 1) {
-        return base;
-    }
-    if (exponent % 2) {
-        return modMultiply(base, fastExp(modMultiply(base, base, mod), exponent / 2, mod), mod);
-    }
-
-    return fastExp(modMultiply(base, base, mod), exponent / 2, mod);
-}
-
-void bitReverse(vector<uint64_t> &vec) {
-    int n = vec.size();
-    int bits = log2(n);
-    for (uint32_t i = 0; i < n; ++i) {
-        uint32_t ci = i;
-        uint32_t bitReversedI = 0;
-        uint32_t currentPos = bits - 1;
-        while (ci) {
-            bitReversedI |= ((ci & 1) << currentPos);
-            ci >>= 1;
-            currentPos--;
-        }
-        if (i < bitReversedI) {
-            swap(vec[i], vec[bitReversedI]);
-        }
-    }
-}
-
 uint64_t pollardF(uint64_t number, uint64_t constant, uint64_t mod) {
     number = fastExp(number, 2, mod);
     number = (number + constant) % mod;
@@ -211,19 +158,14 @@ uint64_t getPrimitiveRoot(uint64_t prime) {
     return primitiveRoot;
 }
 
-NTTTransformer::NTTTransformer(Parameters parameters) : parameters(parameters), NInvs(parameters.getPrimes().size()),
-                                                        rootPowers(parameters.getPrimes().size(),
-                                                                   vector<uint64_t>(parameters.getRingDegree())),
-                                                        inverseRootPowers(parameters.getPrimes().size(),
-                                                                          vector<uint64_t>(parameters.getRingDegree())),
-                                                        psi(parameters.getPrimes().size(),
-                                                            vector<uint64_t>(parameters.getRingDegree())),
-                                                        psiInverse(parameters.getPrimes().size(),
-                                                                   vector<uint64_t>(parameters.getRingDegree())) {
-    uint64_t N = parameters.getRingDegree();
+NTTTransformer::NTTTransformer(int ringDegree, vector<uint64_t> primes) : N(ringDegree), primes(primes), NInvs(primes.size()),
+                                                                          rootPowers(primes.size(), vector<uint64_t>(ringDegree)),
+                                                                          inverseRootPowers(primes.size(), vector<uint64_t>(ringDegree)),
+                                                                          psi(primes.size(), vector<uint64_t>(ringDegree)),
+                                                                          psiInverse(primes.size(), vector<uint64_t>(ringDegree)) {
 
-    for (int currentPrimeLevel = 0; currentPrimeLevel < parameters.getPrimes().size(); ++currentPrimeLevel) {
-        uint64_t Q = parameters.getPrimes()[currentPrimeLevel];
+    for (int currentPrimeLevel = 0; currentPrimeLevel < primes.size(); ++currentPrimeLevel) {
+        uint64_t Q = primes[currentPrimeLevel];
         uint64_t primitiveRoot = getPrimitiveRoot(Q), inversePrimitiveRoot;
         uint64_t convRoot = fastExp(primitiveRoot, (Q - 1) / (2 * N), Q);
         uint64_t convRootInverse = fastExp(primitiveRoot, (Q - 1) - (Q - 1) / (2 * N), Q);
@@ -310,8 +252,8 @@ void NTTTransformer::toNTT(Polynomial<uint64_t> &poly, int level) {
     if (poly.isTransformedToNTT()) {
         return;
     }
-    convolute(poly.getCoeffs(), psi[level], parameters.getPrimes()[level]);
-    ntt(poly.getCoeffs(), rootPowers[level], parameters.getPrimes()[level]);
+    convolute(poly.getCoeffs(), psi[level], primes[level]);
+    ntt(poly.getCoeffs(), rootPowers[level], primes[level]);
 
     poly.setTransformedToNTT(true);
 }
@@ -320,12 +262,12 @@ void NTTTransformer::fromNTT(Polynomial<uint64_t> &poly, int level) {
     if (!poly.isTransformedToNTT()) {
         return;
     }
-    inverseNtt(poly.getCoeffs(), inverseRootPowers[level], parameters.getPrimes()[level], NInvs[level]);
-    invConvolute(poly.getCoeffs(), psiInverse[level], parameters.getPrimes()[level]);
+    inverseNtt(poly.getCoeffs(), inverseRootPowers[level], primes[level], NInvs[level]);
+    invConvolute(poly.getCoeffs(), psiInverse[level], primes[level]);
 
     poly.setTransformedToNTT(false);
 }
 
 uint64_t NTTTransformer::getPrime(int level) {
-    return parameters.getPrimes()[level];
+    return primes[level];
 }

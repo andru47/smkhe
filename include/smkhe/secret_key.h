@@ -1,20 +1,22 @@
-//
-// Created by Andru Stefanescu on 31.01.2022.
-//
 #include "smkhe/math/polynomial.h"
 #include "smkhe/parameters.h"
-#include <cstdint>
+#include "smkhe/util.h"
 
 #ifndef SMKHE_SECRET_KEY_H
 #define SMKHE_SECRET_KEY_H
 
 
 class SecretKey {
-    Polynomial<uint64_t> poly;
+    vector<Polynomial<uint64_t>> poly;
     Parameters params;
 public:
-    SecretKey(Parameters params);
-    SecretKey(Parameters params, Polynomial<uint64_t> givenPoly);
+    explicit SecretKey(Parameters params);
+
+    SecretKey(Parameters params, vector<Polynomial<uint64_t>> givenPoly);
+
+    Polynomial<uint64_t> &getPoly(int level);
+
+    vector<Polynomial<uint64_t>> &getPolys();
 };
 
 #endif //SMKHE_SECRET_KEY_H

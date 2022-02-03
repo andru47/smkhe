@@ -21,3 +21,7 @@ void Plaintext::add(Plaintext &otherPlain, int modulusLevel) {
 int Plaintext::getLevel() {
     return currentLevel;
 }
+
+Plaintext::Plaintext(vector<Polynomial<uint64_t>> polynomials, Parameters params, int level) : polynomials(polynomials),
+                                                                                               parameters(params),
+                                                                                               currentLevel(level) {}

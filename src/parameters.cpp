@@ -1,7 +1,7 @@
 #include "smkhe/parameters.h"
 
 Parameters::Parameters(double scale, int ringDegree, vector<uint64_t> primes) : scale(scale), ringDegree(ringDegree),
-                                                                                primes(primes) {}
+                                                                                primes(primes), transformer(ringDegree, primes) {}
 
 double Parameters::getScale() {
     return this->scale;
@@ -31,6 +31,10 @@ uint64_t Parameters::getModulus(int level) {
     return primes[level];
 }
 
-vector<uint64_t> Parameters::getPrimes() {
+vector<uint64_t>& Parameters::getPrimes() {
     return primes;
+}
+
+NTTTransformer& Parameters::getTransformer() {
+    return transformer;
 }
