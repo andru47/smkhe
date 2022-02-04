@@ -7,7 +7,7 @@ Ciphertext Encryptor::encrypt(Plaintext &plain, PublicKey &pub) {
     vector<Polynomial<uint64_t>> encryptedPolysA(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree()));
     vector<Polynomial<uint64_t>> encryptedPolysB(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree()));
     vector<Polynomial<uint64_t>> v(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree()));
-    samplePolynomial(v, params.getPrimes());
+    samplePolynomial(v, params.getPrimes(), false);
 
     for (int level = 0; level < params.getModulusLevels(); ++level) {
         params.getTransformer().toNTT(plain.getPolynomial(level), level);

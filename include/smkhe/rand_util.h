@@ -6,11 +6,11 @@
 #ifndef SMKHE_RAND_UTIL_H
 #define SMKHE_RAND_UTIL_H
 
-uint64_t getRandom();
+uint64_t getRandom(uint64_t end);
 
 long long getRandomError();
 
-void samplePolynomial(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes);
+void samplePolynomial(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes, bool isForPublic);
 
 void sampleErrorAndAdd(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes, NTTTransformer &transformer);
 

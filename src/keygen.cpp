@@ -11,7 +11,7 @@ bool Keygen::isSecretKeyAttached() {
 }
 
 SecretKey Keygen::generateSecretKey() {
-    samplePolynomial(secretKey.getPolys(), params.getPrimes());
+    samplePolynomial(secretKey.getPolys(), params.getPrimes(), false);
     for (int level = 0; level < params.getModulusLevels(); ++level) {
         params.getTransformer().toNTT(secretKey.getPolys()[level], level);
     }
@@ -27,7 +27,7 @@ PublicKey Keygen::generatePublicKey() {
     vector<Polynomial<uint64_t>> polyA(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree())),
             polyB(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree()));
 
-    samplePolynomial(polyB, params.getPrimes());
+    samplePolynomial(polyB, params.getPrimes(), true);
     for (int level = 0; level < params.getModulusLevels(); ++level) {
         params.getTransformer().toNTT(polyB[level], level);
     }

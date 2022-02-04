@@ -1,23 +1,23 @@
 #include "smkhe/rand_util.h"
 
-uint64_t getRandom() {
+uint64_t getRandom(uint64_t end) {
     static random_device rd;
     static mt19937 generator(rd());
-    static uniform_int_distribution<uint64_t> distribution(0, 2);
+    uniform_int_distribution<uint64_t> distribution(0, end);
     return distribution(generator);
 }
 
 long long getRandomError() {
     static random_device rd;
     static mt19937 generator(rd());
-    static normal_distribution<double> distribution(0, 3.2);
+    normal_distribution<double> distribution(0, 3.2);
     double nr = distribution(generator);
     return llround(nr);
 }
 
-void samplePolynomial(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes) {
+void samplePolynomial(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes, bool isForPublic) {
     for (int i = 0; i < poly[0].getDegree(); ++i) {
-        uint64_t generated = getRandom();
+        uint64_t generated = getRandom(isForPublic ? primes.back() - 1 : 2);
         for (int level = 0; level < primes.size(); ++level) {
             uint64_t modGenerated = generated == 0 ? (primes[level] - 1) : (generated - 1);
             poly[level].setCoeff(i, modGenerated);
