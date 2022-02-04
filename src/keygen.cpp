@@ -10,8 +10,20 @@ bool Keygen::isSecretKeyAttached() {
     return secretKeyAttached;
 }
 
+void resetKey(SecretKey &secretKey, int levels) {
+    for (int i = 0; i < levels; ++i) {
+        for (int j = 0; j < secretKey.getPolys()[i].getDegree(); ++j) {
+            secretKey.getPolys()[i].setCoeff(j, 0);
+        }
+        secretKey.getPolys()[i].setTransformedToNTT(false);
+    }
+}
+
 SecretKey Keygen::generateSecretKey() {
-    samplePolynomial(secretKey.getPolys(), params.getPrimes(), false);
+    if (secretKeyAttached) {
+        resetKey(secretKey, params.getModulusLevels());
+    }
+    sampleHWT(secretKey.getPolys(), params.getPrimes());
     for (int level = 0; level < params.getModulusLevels(); ++level) {
         params.getTransformer().toNTT(secretKey.getPolys()[level], level);
     }

@@ -40,3 +40,19 @@ void sampleErrorAndAdd(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &pri
     }
 
 }
+
+void sampleHWT(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes) {
+    int howManySampled = 0;
+    int hammingDistance = 128;
+    while (howManySampled < hammingDistance) {
+        uint64_t position = getRandom(poly[0].getDegree() - 1);
+        if (!poly[0].getCoeff(position)) {
+            ++howManySampled;
+            uint64_t generated = getRandom(1);
+            for (int level = 0; level < primes.size(); ++level) {
+                uint64_t modGenerated = !generated ? (primes[level] - 1) : generated;
+                poly[level].setCoeff(position, modGenerated);
+            }
+        }
+    }
+}

@@ -8,6 +8,8 @@
 
 uint64_t getRandom(uint64_t end);
 
+void sampleHWT(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes);
+
 long long getRandomError();
 
 void samplePolynomial(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes, bool isForPublic);
