@@ -1,4 +1,4 @@
-#include <vector>
+#include "smkhe/util.h"
 
 using namespace std;
 
@@ -9,6 +9,8 @@ template<typename T>
 class Polynomial {
     int degree;
     vector<T> coeffs;
+    bool transformedToNTT = false;
+
 public:
     Polynomial(int degree, vector<T> givenCoeffs) : degree(degree), coeffs(givenCoeffs) {
         if (degree != givenCoeffs.size()) {
@@ -34,6 +36,14 @@ public:
         coeffs[pos] = value;
     }
 
+    bool isTransformedToNTT() {
+        return transformedToNTT;
+    }
+
+    void setTransformedToNTT(bool transformed) {
+        transformedToNTT = transformed;
+    }
+
     T getCoeff(int index) {
         if (index >= degree) {
             throw ("Index out of bounds");
@@ -41,7 +51,7 @@ public:
         return coeffs[index];
     }
 
-    vector<T> getCoeffs() {
+    vector<T> &getCoeffs() {
         return this->coeffs;
     }
 
@@ -116,6 +126,36 @@ public:
         }
         degree = coeffIndex + 1;
         return *this;
+    }
+
+    void multiply(uint64_t num, uint64_t mod) {
+        for (int index = 0; index < degree; ++index) {
+            coeffs[index] = modMultiply(coeffs[index], num, mod);
+        }
+    }
+
+    void multiply(Polynomial<T> &other, uint64_t mod) {
+        if (!transformedToNTT || !other.transformedToNTT) {
+            throw("Both polynomials need to be transformed to NTT.");
+        }
+        if (degree != other.degree) {
+            throw("Both polynomials need to have the same degree.");
+        }
+        for (int index = 0; index < degree; ++index) {
+            coeffs[index] = modMultiply(coeffs[index], other.coeffs[index], mod);
+        }
+    }
+
+    void add(Polynomial<uint64_t> &other, uint64_t mod) {
+        if (!transformedToNTT || !other.transformedToNTT) {
+            throw("Both polynomials need to be transformed to NTT.");
+        }
+        if (degree != other.degree) {
+            throw("Both polynomials need to have the same degree.");
+        }
+        for (int index = 0; index < degree; ++index) {
+            coeffs[index] = modAdd(coeffs[index], other.coeffs[index], mod);
+        }
     }
 };
 
