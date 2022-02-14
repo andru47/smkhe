@@ -20,6 +20,8 @@ public:
 
     explicit Polynomial(int degree) : degree(degree), coeffs(degree) {}
 
+    Polynomial() : degree(0) {}
+
     void setDegree(int degree) {
         this->degree = degree;
         coeffs.resize(degree);

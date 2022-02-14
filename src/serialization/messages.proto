@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+message DoubleVectorUintSerializer {
+  int32 N = 1;
+  int32 M = 2;
+  repeated uint64 numbers = 3[packed = true];
+}
+
+message PolynomialSerializer {
+  int32 degree = 1;
+  repeated uint64 coeffs = 2[packed = true];
+  bool transformerToNTT = 3;
+}
+
+message SecretKeySerializer {
+  repeated PolynomialSerializer polyQ = 1;
+  repeated PolynomialSerializer polyP = 2;
+}
+
+message PublicKeySerializer {
+  repeated PolynomialSerializer polyA = 1;
+  repeated PolynomialSerializer polyB = 2;
+}
+
+message CiphertextSerializer {
+  repeated PolynomialSerializer polysA = 1;
+  repeated PolynomialSerializer polysB = 2;
+  int32 level = 3;
+}
+
+message EvaluationKeySerializer {
+  repeated PolynomialSerializer aP = 1;
+  repeated PolynomialSerializer aQ = 2;
+  repeated PolynomialSerializer bP = 3;
+  repeated PolynomialSerializer bQ = 4;
+}
