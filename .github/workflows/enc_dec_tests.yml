@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Setup protoc
-      uses: arduino/setup-protoc@v1.1.2
+      run: apt install -y protobuf-compiler
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build
