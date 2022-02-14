@@ -13,32 +13,22 @@ void randomRound(complex<double> &realCoeffs) {
     realCoeffs.imag(0);
 }
 
-void scaleUp(vector<complex<double>> &vec, vector<uint64_t> &dest, double scale, uint64_t mod) {
+void scaleUp(vector<complex<double>> &vec, vector<uint64_t> &dest, uint64_t scale, uint64_t mod) {
     for (int i = 0; i < vec.size(); ++i) {
-        vec[i] *= scale;
-        randomRound(vec[i]);
-        if (vec[i].real() < 0) {
-            vec[i].real(mod + (llround((vec[i].real()))));
-        } else {
-            vec[i].real(llround((vec[i].real())) % mod);
-        }
-        dest[i] = vec[i].real();
-    }
-}
-
-void scaleDown(vector<uint64_t> &vec, vector<complex<double>> &dest, double scale, uint64_t mod) {
-    for (int i = 0; i < vec.size(); ++i) {
-        complex<double> val;
+        complex<double> nr = vec[i];
+        nr *= scale;
         bool sign = false;
-        if (vec[i] >= mod / 2) {
-            vec[i] = mod - vec[i];
+        if (nr.real() < 0) {
             sign = true;
+            nr.real(-nr.real());
         }
-        val.real((vec[i] * 1.0) / scale);
+        nr.real((long long) (nr.real() + 0.5));
+        long long longNr = nr.real();
         if (sign) {
-            val.real(-val.real());
+            dest[i] = (mod - longNr) % mod;
+        } else {
+            dest[i] = longNr % mod;
         }
-        dest[i] = val;
     }
 }
 
@@ -139,7 +129,7 @@ vector<complex<double>> tau(vector<complex<double>> &givenPolynomial, vector<int
     return vector<complex<double>>(mCombined.begin(), mCombined.end());
 }
 
-Encoder::Encoder(Parameters &givenParameters) : parameters(givenParameters) {
+Encoder::Encoder(Parameters &givenParameters) : parameters(givenParameters), converter(givenParameters) {
     int fivePow = 1;
     indexHash.resize(givenParameters.getRingDegree());
     for (int i = 0; i < givenParameters.getRingDegree(); ++i) {
@@ -187,10 +177,12 @@ Plaintext Encoder::encode(vector<double> toEncode) {
 }
 
 vector<complex<double>> Encoder::decode(Plaintext &givenPlaintext) {
-    vector<uint64_t> coeffs = givenPlaintext.getPolynomial(givenPlaintext.getLevel()).getCoeffs();
-    vector<complex<double>> givenVector(coeffs.size());
-
-    scaleDown(coeffs, givenVector, parameters.getScale(), parameters.getModulus(givenPlaintext.getLevel()));
+    vector<complex<double>> givenVector(parameters.getRingDegree());
+    vector<vector<uint64_t>> allCoeffs(givenPlaintext.getLevel() + 1);
+    for (int i = 0; i <= givenPlaintext.getLevel(); ++i) {
+        allCoeffs[i] = givenPlaintext.getPolynomial(i).getCoeffs();
+    }
+    converter.scaleDownFromCRT(allCoeffs, givenVector);
     vector<complex<double>> result = tau(givenVector, indexHash, rootAtPower);
     return result;
 }

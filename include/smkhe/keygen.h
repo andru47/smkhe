@@ -3,6 +3,7 @@
 #include "smkhe/secret_key.h"
 #include "smkhe/parameters.h"
 #include "smkhe/rand_util.h"
+#include "smkhe/evaluation_key.h"
 
 #ifndef SMKHE_KEYGEN_H
 #define SMKHE_KEYGEN_H
@@ -22,6 +23,8 @@ public:
     SecretKey generateSecretKey();
 
     PublicKey generatePublicKey();
+
+    EvaluationKey generateEvaluationKey();
 };
 
 #endif //SMKHE_KEYGEN_H

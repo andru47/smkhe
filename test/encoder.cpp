@@ -19,7 +19,7 @@ vector<double> generateDoubles(int number) {
 }
 
 TEST(Encoder, EncodeAndDecodeWithValidParams) {
-    Parameters parameters(pow(2.0, 40), 16384, {BIG_PRIME});
+    Parameters parameters(pow(2.0, 40), 16384, {BIG_PRIME}, {BIG_PRIME});
     Encoder enc(parameters);
     vector<double> numbers = generateDoubles(8192);
     Plaintext returnedPlaintex = enc.encode(numbers);

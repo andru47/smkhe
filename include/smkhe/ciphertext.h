@@ -18,7 +18,11 @@ public:
 
     vector<Polynomial<uint64_t>> &getPolysB();
 
+    vector<Polynomial<uint64_t>> &getPolysA();
+
     int getLevel();
+
+    void decreaseLevel(int howMany);
 };
 
 #endif //SMKHE_CIPHERTEXT_H

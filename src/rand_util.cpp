@@ -25,6 +25,21 @@ void samplePolynomial(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &prim
     }
 }
 
+void sampleDoublePolynomial(vector<Polynomial<uint64_t>> &polyQ, vector<Polynomial<uint64_t>> &polyP,
+                            vector<uint64_t> &primesQ, vector<uint64_t> &primesP) {
+    for (int i = 0; i < polyQ[0].getDegree(); ++i) {
+        uint64_t generated = getRandom(primesQ.back() - 1);
+        for (int level = 0; level < primesQ.size(); ++level) {
+            uint64_t modGenerated = generated % primesQ[level];
+            polyQ[level].setCoeff(i, modGenerated);
+        }
+        for (int level = 0; level < primesP.size(); ++level) {
+            uint64_t modGenerated = generated % primesP[level];
+            polyP[level].setCoeff(i, modGenerated);
+        }
+    }
+}
+
 void sampleErrorAndAdd(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes, NTTTransformer &transformer) {
     vector<Polynomial<uint64_t>> errors(poly.size(), Polynomial<uint64_t>(poly[0].getDegree()));
     for (int i = 0; i < poly[0].getDegree(); ++i) {
@@ -41,7 +56,34 @@ void sampleErrorAndAdd(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &pri
 
 }
 
-void sampleHWT(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes) {
+void sampleDoubleErrorAndAdd(vector<Polynomial<uint64_t>> &polyQ, vector<Polynomial<uint64_t>> &polyP,
+                             vector<uint64_t> &primesQ, vector<uint64_t> &primesP, NTTTransformer &transformerQ,
+                             NTTTransformer &transformerP) {
+    vector<Polynomial<uint64_t>> errorsQ(polyQ.size(), Polynomial<uint64_t>(polyQ[0].getDegree())), errorsP(
+            polyP.size(), Polynomial<uint64_t>(polyP[0].getDegree()));
+    for (int i = 0; i < polyQ[0].getDegree(); ++i) {
+        long long error = getRandomError();
+        for (int level = 0; level < primesQ.size(); ++level) {
+            uint64_t currentError = error < 0 ? (primesQ[level] + error) : error;
+            errorsQ[level].setCoeff(i, currentError);
+        }
+        for (int level = 0; level < primesP.size(); ++level) {
+            uint64_t currentError = error < 0 ? (primesP[level] + error) : error;
+            errorsP[level].setCoeff(i, currentError);
+        }
+    }
+    for (int level = 0; level < primesQ.size(); ++level) {
+        transformerQ.toNTT(errorsQ[level], level);
+        polyQ[level].add(errorsQ[level], primesQ[level]);
+    }
+    for (int level = 0; level < primesP.size(); ++level) {
+        transformerP.toNTT(errorsP[level], level);
+        polyP[level].add(errorsP[level], primesP[level]);
+    }
+}
+
+void sampleHWT(vector<Polynomial<uint64_t>> &poly, vector<Polynomial<uint64_t>> &polyP, vector<uint64_t> &primes,
+               vector<uint64_t> &specialPrimes) {
     int howManySampled = 0;
     int hammingDistance = 128;
     while (howManySampled < hammingDistance) {
@@ -50,8 +92,12 @@ void sampleHWT(vector<Polynomial<uint64_t>> &poly, vector<uint64_t> &primes) {
             ++howManySampled;
             uint64_t generated = getRandom(1);
             for (int level = 0; level < primes.size(); ++level) {
-                uint64_t modGenerated = !generated ? (primes[level] - 1) : generated;
-                poly[level].setCoeff(position, modGenerated);
+                uint64_t modGeneratedQ = !generated ? (primes[level] - 1) : generated;
+                poly[level].setCoeff(position, modGeneratedQ);
+            }
+            for (int level = 0; level < specialPrimes.size(); ++level) {
+                uint64_t modGeneratedP = !generated ? (specialPrimes[level] - 1) : generated;
+                polyP[level].setCoeff(position, modGeneratedP);
             }
         }
     }

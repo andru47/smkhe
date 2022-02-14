@@ -1,13 +1,15 @@
 #include "smkhe/parameters.h"
 
-Parameters::Parameters(double scale, int ringDegree, vector<uint64_t> primes) : scale(scale), ringDegree(ringDegree),
-                                                                                primes(primes), transformer(ringDegree, primes) {}
+Parameters::Parameters(uint64_t scale, int ringDegree, vector<uint64_t> qPrimes, vector<uint64_t> pPrimes) : scale(scale), ringDegree(ringDegree),
+                                                                                                             qPrimes(qPrimes), pPrimes(pPrimes),
+                                                                                                             transformerQ(ringDegree, qPrimes),
+                                                                                                             transformerP(ringDegree, pPrimes) {}
 
-double Parameters::getScale() {
+uint64_t Parameters::getScale() {
     return this->scale;
 }
 
-void Parameters::setScale(double scale) {
+void Parameters::setScale(uint64_t scale) {
     this->scale = scale;
 }
 
@@ -24,17 +26,29 @@ bool Parameters::operator==(const Parameters other) {
 }
 
 int Parameters::getModulusLevels() {
-    return primes.size();
+    return qPrimes.size();
 }
 
 uint64_t Parameters::getModulus(int level) {
-    return primes[level];
+    return qPrimes[level];
 }
 
-vector<uint64_t>& Parameters::getPrimes() {
-    return primes;
+vector<uint64_t> &Parameters::getPrimes() {
+    return qPrimes;
 }
 
-NTTTransformer& Parameters::getTransformer() {
-    return transformer;
+NTTTransformer &Parameters::getTransformerQ() {
+    return transformerQ;
+}
+
+NTTTransformer &Parameters::getTransformerP() {
+    return transformerP;
+}
+
+vector<uint64_t> &Parameters::getSpecialPrimes() {
+    return pPrimes;
+}
+
+int Parameters::getSpecialPrimesNumber() {
+    return pPrimes.size();
 }
