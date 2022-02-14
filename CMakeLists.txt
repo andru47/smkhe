@@ -11,7 +11,7 @@ FILE(DOWNLOAD https://github.com/faheel/BigInt/releases/download/v0.5.0-dev/BigI
 
 add_library(smkhe SHARED ${SOURCE_FILES})
 
-target_include_directories(smkhe PUBLIC ./include ./lib/BigInt.h)
+target_include_directories(smkhe PUBLIC ./include ./lib)
 
 include(FetchContent)
 
