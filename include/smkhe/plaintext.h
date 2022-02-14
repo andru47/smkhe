@@ -10,7 +10,7 @@ using namespace std;
 class Plaintext {
     vector<Polynomial<uint64_t>> polynomials;
     Parameters parameters;
-    int currentLevel = 0;
+    int currentLevel;
 
 public:
     Plaintext(vector<vector<uint64_t>> &givenCoefficients, Parameters &parameters);
@@ -22,6 +22,8 @@ public:
     void add(Plaintext &otherPlain, int modulusLevel);
 
     int getLevel();
+
+    void decreaseLevel(int howMany);
 };
 
 #endif //SMKHE_PLAINTEXT_H

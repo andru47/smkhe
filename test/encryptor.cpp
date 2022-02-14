@@ -8,7 +8,7 @@
 #define BIG_PRIME 1152921504606748673
 using namespace std;
 
-Parameters parameters(pow(2.0, 40), 16384, {BIG_PRIME});
+Parameters parameters(pow(2.0, 40), 16384, {BIG_PRIME}, {BIG_PRIME});
 Encoder enc(parameters);
 Encryptor encryptor(parameters);
 Keygen keygen(parameters);

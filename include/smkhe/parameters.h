@@ -7,17 +7,17 @@
 using namespace std;
 
 class Parameters {
-    double scale;
+    uint64_t scale;
     int ringDegree;
-    vector<uint64_t> primes;
-    NTTTransformer transformer;
+    vector<uint64_t> qPrimes, pPrimes;
+    NTTTransformer transformerQ, transformerP;
 
 public:
-    Parameters(double scale, int ringDegree, vector<uint64_t> primes);
+    Parameters(uint64_t scale, int ringDegree, vector<uint64_t> qPrimes, vector<uint64_t> pPrimes);
 
-    double getScale();
+    uint64_t getScale();
 
-    void setScale(double scale);
+    void setScale(uint64_t scale);
 
     int getRingDegree();
 
@@ -31,7 +31,13 @@ public:
 
     vector<uint64_t> &getPrimes();
 
-    NTTTransformer &getTransformer();
+    vector<uint64_t> &getSpecialPrimes();
+
+    int getSpecialPrimesNumber();
+
+    NTTTransformer &getTransformerQ();
+
+    NTTTransformer &getTransformerP();
 };
 
 #endif //SMKHE_PARAMETERS_H

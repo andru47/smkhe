@@ -1,6 +1,7 @@
 #include "smkhe/parameters.h"
 #include "smkhe/plaintext.h"
 #include "smkhe/util.h"
+#include "smkhe/math/rns_converter.h"
 
 #ifndef SMKHE_ENCODER_H
 #define SMKHE_ENCODER_H
@@ -11,6 +12,7 @@ class Encoder {
     Parameters parameters;
     vector<complex<double>> rootAtPower;
     vector<int> indexHash;
+    RNSConverter converter;
 
 public:
     Encoder(Parameters &givenParameters);

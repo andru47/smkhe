@@ -12,8 +12,8 @@ using namespace std;
 
 vector<uint64_t> predefinedBigPrimes = {1152921504606748673, 576460752308273153, 576460752302473217,
                                         576460752304439297};
-Parameters params(double(pow(2.0, 40)), NUMBER_COEFFS, predefinedBigPrimes);
-Parameters paramsMult(double(pow(2.0, 40)), MULT_NUMBER_COEFFS, predefinedBigPrimes);
+Parameters params(double(pow(2.0, 40)), NUMBER_COEFFS, predefinedBigPrimes, predefinedBigPrimes);
+Parameters paramsMult(double(pow(2.0, 40)), MULT_NUMBER_COEFFS, predefinedBigPrimes, predefinedBigPrimes);
 
 vector<uint64_t> generateUints(int number) {
     vector<uint64_t> result(number);
@@ -54,8 +54,8 @@ TEST(NTTransformer, TO_NTT_FROM_NTT_IS_IDENTITY) {
     vector<uint64_t> coeffs = generateUints(NUMBER_COEFFS);
     Polynomial<uint64_t> poly(NUMBER_COEFFS, coeffs);
     for (int level = 0; level < params.getModulusLevels(); ++level) {
-        params.getTransformer().toNTT(poly, level);
-        params.getTransformer().fromNTT(poly, level);
+        params.getTransformerQ().toNTT(poly, level);
+        params.getTransformerQ().fromNTT(poly, level);
         for (int index = 0; index < NUMBER_COEFFS; ++index) {
             ASSERT_EQ(poly.getCoeffs()[index], coeffs[index]);
         }
@@ -70,14 +70,14 @@ TEST(NTTransformer, NTT_ADDITION) {
 
     for (int level = 0; level < params.getModulusLevels(); ++level) {
         poly1.setCoeffs(coeffs1);
-        params.getTransformer().toNTT(poly1, level);
-        params.getTransformer().toNTT(poly2, level);
+        params.getTransformerQ().toNTT(poly1, level);
+        params.getTransformerQ().toNTT(poly2, level);
         for (int index = 0; index < NUMBER_COEFFS; ++index) {
             poly1.getCoeffs()[index] =
-                    (poly1.getCoeffs()[index] + poly2.getCoeffs()[index]) % params.getTransformer().getPrime(level);
+                    (poly1.getCoeffs()[index] + poly2.getCoeffs()[index]) % params.getTransformerQ().getPrime(level);
         }
-        params.getTransformer().fromNTT(poly1, level);
-        params.getTransformer().fromNTT(poly2, level);
+        params.getTransformerQ().fromNTT(poly1, level);
+        params.getTransformerQ().fromNTT(poly2, level);
         for (int index = 0; index < NUMBER_COEFFS; ++index) {
             ASSERT_EQ(poly1.getCoeffs()[index], coeffs1[index] + coeffs2[index]);
         }
@@ -96,19 +96,19 @@ TEST(NTTransformer, NTT_MULTIPLICATION) {
             for (int j = 0; j < MULT_NUMBER_COEFFS; ++j) {
                 normalMult[i + j] = modAdd(normalMult[i + j],
                                            modMultiply(coeffs1[i], coeffs2[j],
-                                           paramsMult.getTransformer().getPrime(level)),
-                                           paramsMult.getTransformer().getPrime(level));
+                                           paramsMult.getTransformerQ().getPrime(level)),
+                                           paramsMult.getTransformerQ().getPrime(level));
             }
         }
 
-        paramsMult.getTransformer().toNTT(poly1, level);
-        paramsMult.getTransformer().toNTT(poly2, level);
+        paramsMult.getTransformerQ().toNTT(poly1, level);
+        paramsMult.getTransformerQ().toNTT(poly2, level);
 
-        poly1.multiply(poly2, paramsMult.getTransformer().getPrime(level));
-        paramsMult.getTransformer().fromNTT(poly1, level);
-        paramsMult.getTransformer().fromNTT(poly2, level);
+        poly1.multiply(poly2, paramsMult.getTransformerQ().getPrime(level));
+        paramsMult.getTransformerQ().fromNTT(poly1, level);
+        paramsMult.getTransformerQ().fromNTT(poly2, level);
 
-        dividePoly(normalMult, paramsMult.getTransformer().getPrime(level));
+        dividePoly(normalMult, paramsMult.getTransformerQ().getPrime(level));
         for (int index = 0; index < MULT_NUMBER_COEFFS; ++index) {
             ASSERT_EQ(poly1.getCoeffs()[index], normalMult[index]);
         }

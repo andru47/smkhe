@@ -136,10 +136,10 @@ public:
 
     void multiply(Polynomial<T> &other, uint64_t mod) {
         if (!transformedToNTT || !other.transformedToNTT) {
-            throw("Both polynomials need to be transformed to NTT.");
+            throw ("Both polynomials need to be transformed to NTT.");
         }
         if (degree != other.degree) {
-            throw("Both polynomials need to have the same degree.");
+            throw ("Both polynomials need to have the same degree.");
         }
         for (int index = 0; index < degree; ++index) {
             coeffs[index] = modMultiply(coeffs[index], other.coeffs[index], mod);
@@ -148,13 +148,30 @@ public:
 
     void add(Polynomial<uint64_t> &other, uint64_t mod) {
         if (!transformedToNTT || !other.transformedToNTT) {
-            throw("Both polynomials need to be transformed to NTT.");
+            throw ("Both polynomials need to be transformed to NTT.");
         }
         if (degree != other.degree) {
-            throw("Both polynomials need to have the same degree.");
+            throw ("Both polynomials need to have the same degree.");
         }
         for (int index = 0; index < degree; ++index) {
             coeffs[index] = modAdd(coeffs[index], other.coeffs[index], mod);
+        }
+    }
+
+    void sub(Polynomial<uint64_t> &other, uint64_t mod) {
+        if (!transformedToNTT || !other.transformedToNTT) {
+            throw ("Both polynomials need to be transformed to NTT.");
+        }
+        if (degree != other.degree) {
+            throw ("Both polynomials need to have the same degree.");
+        }
+        for (int index = 0; index < degree; ++index) {
+            if (other.coeffs[index] <= coeffs[index]) {
+                coeffs[index] = coeffs[index] - other.coeffs[index];
+            } else {
+                coeffs[index] = coeffs[index] + mod - other.coeffs[index];
+            }
+            coeffs[index] %= mod;
         }
     }
 };
