@@ -9,6 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Setup protoc
+      uses: arduino/setup-protoc@v1.1.2
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build
 
