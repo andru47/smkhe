@@ -7,10 +7,11 @@
 class Ciphertext {
     vector<Polynomial<uint64_t>> polysA, polysB;
     int level;
-    Parameters params;
 
 public:
-    Ciphertext(Parameters params, int level, vector<Polynomial<uint64_t>> polysA, vector<Polynomial<uint64_t>> polysB);
+    Ciphertext(int level, vector<Polynomial<uint64_t>> polysA, vector<Polynomial<uint64_t>> polysB);
+
+    Ciphertext();
 
     Polynomial<uint64_t> &getPolyA(int givenLevel);
 
@@ -23,6 +24,10 @@ public:
     int getLevel();
 
     void decreaseLevel(int howMany);
+
+    void serialize(string &givenString);
+
+    void deserialize(string &givenString);
 };
 
 #endif //SMKHE_CIPHERTEXT_H

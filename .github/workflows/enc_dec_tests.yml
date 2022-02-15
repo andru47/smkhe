@@ -9,6 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Setup protoc
+      run: sudo apt install -y protobuf-compiler
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build
 

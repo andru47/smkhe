@@ -1,7 +1,7 @@
 #include <random>
 #include "smkhe/keygen.h"
 
-Keygen::Keygen(Parameters params) : params(params), secretKey(params), secretKeyAttached(false) {}
+Keygen::Keygen(Parameters params) : params(params), secretKey(params.getModulusLevels(), params.getSpecialPrimesNumber(), params.getRingDegree()), secretKeyAttached(false) {}
 
 Keygen::Keygen(Parameters params, SecretKey secretKey) : params(params), secretKey(secretKey),
                                                          secretKeyAttached(true) {}
@@ -59,7 +59,7 @@ PublicKey Keygen::generatePublicKey() {
     }
     sampleErrorAndAdd(polyA, params.getPrimes(), params.getTransformerQ());
 
-    return PublicKey(params, polyA, polyB);
+    return PublicKey(polyA, polyB);
 }
 
 EvaluationKey Keygen::generateEvaluationKey() {

@@ -7,14 +7,21 @@
 
 class PublicKey {
     vector<Polynomial<uint64_t>> polyA, polyB;
-    Parameters params;
 
 public:
-    PublicKey(Parameters params, vector<Polynomial<uint64_t>> polyA, vector<Polynomial<uint64_t>> polyB);
+    PublicKey(vector<Polynomial<uint64_t>> polyA, vector<Polynomial<uint64_t>> polyB);
+
+    PublicKey();
+
+    int getLevels();
 
     Polynomial<uint64_t> getA(int level);
 
     Polynomial<uint64_t> getB(int level);
+
+    void serialize(string &givenString);
+
+    void deserialize(string &givenString);
 };
 
 #endif //SMKHE_PUBLIC_KEY_H

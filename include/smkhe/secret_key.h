@@ -8,11 +8,13 @@
 class SecretKey {
     vector<Polynomial<uint64_t>> polyQ;
     vector<Polynomial<uint64_t>> polyP;
-    Parameters params;
-public:
-    explicit SecretKey(Parameters params);
 
-    SecretKey(Parameters params, vector<Polynomial<uint64_t>> givenPolyQ, vector<Polynomial<uint64_t>> givenPolyP);
+public:
+    SecretKey(int levels, int specialLevels, int ringDegree);
+
+    SecretKey();
+
+    SecretKey(vector<Polynomial<uint64_t>> givenPolyQ, vector<Polynomial<uint64_t>> givenPolyP);
 
     Polynomial<uint64_t> &getPolyQ(int level);
 
@@ -21,6 +23,10 @@ public:
     vector<Polynomial<uint64_t>> &getPolysQ();
 
     vector<Polynomial<uint64_t>> &getPolysP();
+
+    void serialize(string &resultedString);
+
+    void deserialize(string &givenString);
 };
 
 #endif //SMKHE_SECRET_KEY_H

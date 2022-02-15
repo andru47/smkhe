@@ -24,7 +24,7 @@ Ciphertext Encryptor::encrypt(Plaintext &plain, PublicKey &pub) {
 
     sampleErrorAndAdd(encryptedPolysA, params.getPrimes(), params.getTransformerQ());
     sampleErrorAndAdd(encryptedPolysB, params.getPrimes(), params.getTransformerQ());
-    return Ciphertext(params, plain.getLevel(), encryptedPolysA, encryptedPolysB);
+    return Ciphertext(plain.getLevel(), encryptedPolysA, encryptedPolysB);
 }
 
 Plaintext Encryptor::decrypt(Ciphertext &cipher, SecretKey &secret) {
