@@ -7,25 +7,27 @@
 #ifndef SMKHE_EVALUATOR_H
 #define SMKHE_EVALUATOR_H
 
-class Evaluator {
-    Parameters params;
-    EvaluationKey evk;
-    RNSTransformer rnsTransformer;
+namespace smkhe {
+    class Evaluator {
+        Parameters params;
+        EvaluationKey evk;
+        RNSTransformer rnsTransformer;
 
-public:
-    Evaluator(Parameters params, EvaluationKey evk);
+    public:
+        Evaluator(Parameters params, EvaluationKey evk);
 
-    void rescaleInPlace(Ciphertext &cipher);
+        void rescaleInPlace(Ciphertext &cipher);
 
-    void multiplyRelinInPlace(Ciphertext &cipherA, Ciphertext &cipherB);
+        void multiplyRelinInPlace(Ciphertext &cipherA, Ciphertext &cipherB);
 
-    void multiplyPlainInPlace(Ciphertext &cipher, Plaintext &plaintext);
+        void multiplyPlainInPlace(Ciphertext &cipher, Plaintext &plaintext);
 
-    void addPlainInPlace(Ciphertext &cipher, Plaintext &plaintext);
+        void addPlainInPlace(Ciphertext &cipher, Plaintext &plaintext);
 
-    void addCipherInPlace(Ciphertext &cipherA, Ciphertext &cipherB);
+        void addCipherInPlace(Ciphertext &cipherA, Ciphertext &cipherB);
 
-    void negateInPlace(Ciphertext &cipher);
-};
+        void negateInPlace(Ciphertext &cipher);
+    };
+}
 
 #endif //SMKHE_EVALUATOR_H

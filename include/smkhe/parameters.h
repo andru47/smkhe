@@ -6,38 +6,40 @@
 
 using namespace std;
 
-class Parameters {
-    uint64_t scale;
-    int ringDegree;
-    vector<uint64_t> qPrimes, pPrimes;
-    NTTTransformer transformerQ, transformerP;
+namespace smkhe {
+    class Parameters {
+        uint64_t scale;
+        int ringDegree;
+        vector<uint64_t> qPrimes, pPrimes;
+        NTTTransformer transformerQ, transformerP;
 
-public:
-    Parameters(uint64_t scale, int ringDegree, vector<uint64_t> qPrimes, vector<uint64_t> pPrimes);
+    public:
+        Parameters(uint64_t scale, int ringDegree, vector<uint64_t> qPrimes, vector<uint64_t> pPrimes);
 
-    uint64_t getScale();
+        uint64_t getScale();
 
-    void setScale(uint64_t scale);
+        void setScale(uint64_t scale);
 
-    int getRingDegree();
+        int getRingDegree();
 
-    int getModulusLevels();
+        int getModulusLevels();
 
-    uint64_t getModulus(int level);
+        uint64_t getModulus(int level);
 
-    void setRingDegree(int ringDegree);
+        void setRingDegree(int ringDegree);
 
-    bool operator==(const Parameters);
+        bool operator==(const Parameters);
 
-    vector<uint64_t> &getPrimes();
+        vector<uint64_t> &getPrimes();
 
-    vector<uint64_t> &getSpecialPrimes();
+        vector<uint64_t> &getSpecialPrimes();
 
-    int getSpecialPrimesNumber();
+        int getSpecialPrimesNumber();
 
-    NTTTransformer &getTransformerQ();
+        NTTTransformer &getTransformerQ();
 
-    NTTTransformer &getTransformerP();
-};
+        NTTTransformer &getTransformerP();
+    };
+}
 
 #endif //SMKHE_PARAMETERS_H

@@ -8,24 +8,26 @@
 
 using namespace std;
 
-class Encoder {
-    Parameters parameters;
-    vector<complex<double>> rootAtPower;
-    vector<int> indexHash;
-    RNSConverter converter;
+namespace smkhe {
+    class Encoder {
+        Parameters parameters;
+        vector<complex<double>> rootAtPower;
+        vector<int> indexHash;
+        RNSConverter converter;
 
-public:
-    Encoder(Parameters &givenParameters);
+    public:
+        Encoder(Parameters &givenParameters);
 
-    Plaintext encode(vector<complex<double>> toEncode);
+        Plaintext encode(vector<complex<double>> toEncode);
 
-    Plaintext encode(vector<double> toEncode);
+        Plaintext encode(vector<double> toEncode);
 
-    void setParameters(Parameters &givenParameters);
+        void setParameters(Parameters &givenParameters);
 
-    Parameters getParameters();
+        Parameters getParameters();
 
-    vector<complex<double>> decode(Plaintext &givenPlaintext);
-};
+        vector<complex<double>> decode(Plaintext &givenPlaintext);
+    };
+}
 
 #endif //SMKHE_ENCODER_H

@@ -34,3 +34,6 @@ target_link_libraries(tests gtest_main smkhe)
 
 include(GoogleTest)
 gtest_discover_tests(tests PROPERTIES DISCOVERY_TIMEOUT 600)
+
+add_executable(main src/main.cpp)
+target_link_libraries(main smkhe)

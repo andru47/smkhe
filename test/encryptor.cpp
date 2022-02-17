@@ -7,6 +7,7 @@
 #define SEED 9993211
 #define BIG_PRIME 1152921504606748673
 using namespace std;
+using namespace smkhe;
 
 Parameters parameters(pow(2.0, 40), 16384, {BIG_PRIME}, {BIG_PRIME});
 Encoder enc(parameters);

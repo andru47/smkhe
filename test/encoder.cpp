@@ -5,6 +5,7 @@
 #define SEED 1231121
 #define BIG_PRIME 1152921504606748673
 using namespace std;
+using namespace smkhe;
 
 vector<double> generateDoubles(int number) {
     vector<double> result(number);
