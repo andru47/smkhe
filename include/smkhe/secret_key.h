@@ -5,28 +5,30 @@
 #ifndef SMKHE_SECRET_KEY_H
 #define SMKHE_SECRET_KEY_H
 
-class SecretKey {
-    vector<Polynomial<uint64_t>> polyQ;
-    vector<Polynomial<uint64_t>> polyP;
+namespace smkhe {
+    class SecretKey {
+        vector<Polynomial<uint64_t>> polyQ;
+        vector<Polynomial<uint64_t>> polyP;
 
-public:
-    SecretKey(int levels, int specialLevels, int ringDegree);
+    public:
+        SecretKey(int levels, int specialLevels, int ringDegree);
 
-    SecretKey();
+        SecretKey();
 
-    SecretKey(vector<Polynomial<uint64_t>> givenPolyQ, vector<Polynomial<uint64_t>> givenPolyP);
+        SecretKey(vector<Polynomial<uint64_t>> givenPolyQ, vector<Polynomial<uint64_t>> givenPolyP);
 
-    Polynomial<uint64_t> &getPolyQ(int level);
+        Polynomial<uint64_t> &getPolyQ(int level);
 
-    Polynomial<uint64_t> &getPolyP(int level);
+        Polynomial<uint64_t> &getPolyP(int level);
 
-    vector<Polynomial<uint64_t>> &getPolysQ();
+        vector<Polynomial<uint64_t>> &getPolysQ();
 
-    vector<Polynomial<uint64_t>> &getPolysP();
+        vector<Polynomial<uint64_t>> &getPolysP();
 
-    void serialize(string &resultedString);
+        void serialize(string &resultedString);
 
-    void deserialize(string &givenString);
-};
+        void deserialize(string &givenString);
+    };
+}
 
 #endif //SMKHE_SECRET_KEY_H

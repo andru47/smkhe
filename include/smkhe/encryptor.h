@@ -9,15 +9,17 @@
 #ifndef SMKHE_ENCRYPTOR_H
 #define SMKHE_ENCRYPTOR_H
 
-class Encryptor {
-    Parameters params;
-public:
-    explicit Encryptor(Parameters params);
+namespace smkhe {
+    class Encryptor {
+        Parameters params;
+    public:
+        explicit Encryptor(Parameters params);
 
-    Ciphertext encrypt(Plaintext &plain, PublicKey &pub);
+        Ciphertext encrypt(Plaintext &plain, PublicKey &pub);
 
-    Plaintext decrypt(Ciphertext &cipher, SecretKey &secret);
+        Plaintext decrypt(Ciphertext &cipher, SecretKey &secret);
 
-};
+    };
+}
 
 #endif //SMKHE_ENCRYPTOR_H

@@ -78,196 +78,206 @@ static vector<uint64_t> smallPrimes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 3
                                        7681, 7687, 7691, 7699, 7703, 7717, 7723, 7727, 7741, 7753, 7757, 7759, 7789,
                                        7793, 7817, 7823, 7829, 7841, 7853, 7867, 7873, 7877, 7879, 7883, 7901, 7907,
                                        7919};
+namespace smkhe {
+    uint64_t pollardF(uint64_t number, uint64_t constant, uint64_t mod) {
+        number = fastExp(number, 2, mod);
+        number = (number + constant) % mod;
 
-uint64_t pollardF(uint64_t number, uint64_t constant, uint64_t mod) {
-    number = fastExp(number, 2, mod);
-    number = (number + constant) % mod;
-
-    return number;
-}
-
-uint64_t pollardRho(uint64_t toFactorize) {
-    uint64_t x = 2, y = 2, divisor = 1;
-    uint64_t constant = (random() % 10) + 1;
-    while (divisor == 1) {
-        x = pollardF(x, constant, toFactorize);
-        y = pollardF(pollardF(y, constant, toFactorize), constant, toFactorize);
-        if (x < y) {
-            swap(x, y);
-        }
-        uint64_t _gcd = gcd(x - y, toFactorize);
-        divisor = _gcd;
+        return number;
     }
 
-    return divisor;
-}
-
-vector<uint64_t> factorize(uint64_t number) {
-    vector<uint64_t> factors;
-
-    for (auto &it: smallPrimes) {
-        bool divisable = false;
-
-        while (number > 1 && !(number % it)) {
-            number /= it;
-            divisable = true;
+    uint64_t pollardRho(uint64_t toFactorize) {
+        uint64_t x = 2, y = 2, divisor = 1;
+        uint64_t constant = (random() % 10) + 1;
+        while (divisor == 1) {
+            x = pollardF(x, constant, toFactorize);
+            y = pollardF(pollardF(y, constant, toFactorize), constant, toFactorize);
+            if (x < y) {
+                swap(x, y);
+            }
+            uint64_t _gcd = gcd(x - y, toFactorize);
+            divisor = _gcd;
         }
 
-        if (divisable) {
-            factors.push_back(it);
-        }
+        return divisor;
     }
 
-    while (number > 1) {
-        uint64_t pollardFactor = pollardRho(number);
+    vector<uint64_t> factorize(uint64_t number) {
+        vector<uint64_t> factors;
 
-        if (!pollardFactor) {
-            factors.push_back(number);
-            number = 1;
-            continue;
-        } else if (factors.size() && factors.back() != pollardFactor) {
-            factors.push_back(pollardFactor);
+        for (auto &it: smallPrimes) {
+            bool divisable = false;
+
+            while (number > 1 && !(number % it)) {
+                number /= it;
+                divisable = true;
+            }
+
+            if (divisable) {
+                factors.push_back(it);
+            }
         }
-        number /= pollardFactor;
+
+        while (number > 1) {
+            uint64_t pollardFactor = pollardRho(number);
+
+            if (!pollardFactor) {
+                factors.push_back(number);
+                number = 1;
+                continue;
+            } else if (factors.size() && factors.back() != pollardFactor) {
+                factors.push_back(pollardFactor);
+            }
+            number /= pollardFactor;
+        }
+
+        return factors;
     }
 
-    return factors;
-}
+    uint64_t getPrimitiveRoot(uint64_t prime) {
+        uint64_t primitiveRoot = 2;
+        vector<uint64_t> factors = factorize(prime - 1);
+        while (true) {
+            bool valid = true;
 
-uint64_t getPrimitiveRoot(uint64_t prime) {
-    uint64_t primitiveRoot = 2;
-    vector<uint64_t> factors = factorize(prime - 1);
-    while (true) {
-        bool valid = true;
+            for (auto &it: factors) {
+                uint64_t power = (prime - 1) / it;
+                if (fastExp(primitiveRoot, power, prime) == 1) {
+                    valid = false;
+                    break;
+                }
+            }
 
-        for (auto &it: factors) {
-            uint64_t power = (prime - 1) / it;
-            if (fastExp(primitiveRoot, power, prime) == 1) {
-                valid = false;
+            if (valid) {
                 break;
             }
+
+            ++primitiveRoot;
         }
 
-        if (valid) {
-            break;
-        }
-
-        ++primitiveRoot;
+        return primitiveRoot;
     }
 
-    return primitiveRoot;
-}
+    NTTTransformer::NTTTransformer(int ringDegree, vector<uint64_t> primes) : N(ringDegree), primes(primes),
+                                                                              NInvs(primes.size()),
+                                                                              rootPowers(primes.size(),
+                                                                                         vector<uint64_t>(ringDegree)),
+                                                                              inverseRootPowers(primes.size(),
+                                                                                                vector<uint64_t>(
+                                                                                                        ringDegree)),
+                                                                              psi(primes.size(),
+                                                                                  vector<uint64_t>(ringDegree)),
+                                                                              psiInverse(primes.size(),
+                                                                                         vector<uint64_t>(ringDegree)) {
 
-NTTTransformer::NTTTransformer(int ringDegree, vector<uint64_t> primes) : N(ringDegree), primes(primes), NInvs(primes.size()),
-                                                                          rootPowers(primes.size(), vector<uint64_t>(ringDegree)),
-                                                                          inverseRootPowers(primes.size(), vector<uint64_t>(ringDegree)),
-                                                                          psi(primes.size(), vector<uint64_t>(ringDegree)),
-                                                                          psiInverse(primes.size(), vector<uint64_t>(ringDegree)) {
+        for (int currentPrimeLevel = 0; currentPrimeLevel < primes.size(); ++currentPrimeLevel) {
+            uint64_t Q = primes[currentPrimeLevel];
+            uint64_t primitiveRoot = getPrimitiveRoot(Q), inversePrimitiveRoot;
+            uint64_t convRoot = fastExp(primitiveRoot, (Q - 1) / (2 * N), Q);
+            uint64_t convRootInverse = fastExp(primitiveRoot, (Q - 1) - (Q - 1) / (2 * N), Q);
+            inversePrimitiveRoot = fastExp(primitiveRoot, (Q - 1) - (Q - 1) / N, Q);
+            primitiveRoot = fastExp(primitiveRoot, (Q - 1) / N, Q);
+            NInvs[currentPrimeLevel] = fastExp(N, Q - 2, Q);
 
-    for (int currentPrimeLevel = 0; currentPrimeLevel < primes.size(); ++currentPrimeLevel) {
-        uint64_t Q = primes[currentPrimeLevel];
-        uint64_t primitiveRoot = getPrimitiveRoot(Q), inversePrimitiveRoot;
-        uint64_t convRoot = fastExp(primitiveRoot, (Q - 1) / (2 * N), Q);
-        uint64_t convRootInverse = fastExp(primitiveRoot, (Q - 1) - (Q - 1) / (2 * N), Q);
-        inversePrimitiveRoot = fastExp(primitiveRoot, (Q - 1) - (Q - 1) / N, Q);
-        primitiveRoot = fastExp(primitiveRoot, (Q - 1) / N, Q);
-        NInvs[currentPrimeLevel] = fastExp(N, Q - 2, Q);
-
-        rootPowers[currentPrimeLevel][0] = 1;
-        inverseRootPowers[currentPrimeLevel][0] = 1;
-        psi[currentPrimeLevel][0] = 1;
-        psiInverse[currentPrimeLevel][0] = 1;
-        for (int i = 1; i < N; ++i) {
-            inverseRootPowers[currentPrimeLevel][i] = modMultiply(inverseRootPowers[currentPrimeLevel][i - 1],
-                                                                  inversePrimitiveRoot, Q);
-            rootPowers[currentPrimeLevel][i] = modMultiply(rootPowers[currentPrimeLevel][i - 1], primitiveRoot, Q);
-            psi[currentPrimeLevel][i] = modMultiply(psi[currentPrimeLevel][i - 1], convRoot, Q);
-            psiInverse[currentPrimeLevel][i] = modMultiply(psiInverse[currentPrimeLevel][i - 1], convRootInverse, Q);
-        }
-    }
-
-}
-
-void ntt(vector<uint64_t> &coeffs, vector<uint64_t> &roots, uint64_t mod) {
-    bitReverse(coeffs);
-    int N = coeffs.size();
-
-    for (int currentMatrixLen = 2; currentMatrixLen <= N; currentMatrixLen <<= 1) {
-        for (int currentMatrixStartCol = 0; currentMatrixStartCol < N; currentMatrixStartCol += currentMatrixLen) {
-            for (int currentCol = currentMatrixStartCol;
-                 currentCol < currentMatrixStartCol + currentMatrixLen / 2; ++currentCol) {
-                uint64_t element1 = coeffs[currentCol];
-                uint64_t element2 = coeffs[currentCol + currentMatrixLen / 2];
-                element2 = modMultiply(element2, roots[(currentCol - currentMatrixStartCol) * (N / currentMatrixLen)],
-                                       mod);
-
-                coeffs[currentCol] = (element1 + element2) % mod;
-                coeffs[currentCol + currentMatrixLen / 2] =
-                        element1 >= element2 ? (element1 - element2) % mod : (mod + element1 - element2);
+            rootPowers[currentPrimeLevel][0] = 1;
+            inverseRootPowers[currentPrimeLevel][0] = 1;
+            psi[currentPrimeLevel][0] = 1;
+            psiInverse[currentPrimeLevel][0] = 1;
+            for (int i = 1; i < N; ++i) {
+                inverseRootPowers[currentPrimeLevel][i] = modMultiply(inverseRootPowers[currentPrimeLevel][i - 1],
+                                                                      inversePrimitiveRoot, Q);
+                rootPowers[currentPrimeLevel][i] = modMultiply(rootPowers[currentPrimeLevel][i - 1], primitiveRoot, Q);
+                psi[currentPrimeLevel][i] = modMultiply(psi[currentPrimeLevel][i - 1], convRoot, Q);
+                psiInverse[currentPrimeLevel][i] = modMultiply(psiInverse[currentPrimeLevel][i - 1], convRootInverse,
+                                                               Q);
             }
         }
+
     }
-}
 
-void inverseNtt(vector<uint64_t> &coeffs, vector<uint64_t> &invRoots, uint64_t mod, uint64_t NInv) {
-    int N = coeffs.size();
+    void ntt(vector<uint64_t> &coeffs, vector<uint64_t> &roots, uint64_t mod) {
+        bitReverse(coeffs);
+        int N = coeffs.size();
 
-    for (int currentMatrixLen = N; currentMatrixLen >= 1; currentMatrixLen >>= 1) {
-        for (int currentMatrixStartCol = 0; currentMatrixStartCol < N; currentMatrixStartCol += currentMatrixLen) {
-            for (int currentCol = currentMatrixStartCol;
-                 currentCol < currentMatrixStartCol + currentMatrixLen / 2; ++currentCol) {
-                uint64_t element1 =
-                        (coeffs[currentCol] + coeffs[currentCol + currentMatrixLen / 2]) % mod;
-                uint64_t element2 = coeffs[currentCol] >= coeffs[currentCol + currentMatrixLen / 2] ?
-                                    (coeffs[currentCol] - coeffs[currentCol + currentMatrixLen / 2]) % mod :
-                                    (mod + coeffs[currentCol] - coeffs[currentCol + currentMatrixLen / 2]);
-                element2 = modMultiply(element2,
-                                       invRoots[(currentCol - currentMatrixStartCol) * (N / currentMatrixLen)], mod);
+        for (int currentMatrixLen = 2; currentMatrixLen <= N; currentMatrixLen <<= 1) {
+            for (int currentMatrixStartCol = 0; currentMatrixStartCol < N; currentMatrixStartCol += currentMatrixLen) {
+                for (int currentCol = currentMatrixStartCol;
+                     currentCol < currentMatrixStartCol + currentMatrixLen / 2; ++currentCol) {
+                    uint64_t element1 = coeffs[currentCol];
+                    uint64_t element2 = coeffs[currentCol + currentMatrixLen / 2];
+                    element2 = modMultiply(element2,
+                                           roots[(currentCol - currentMatrixStartCol) * (N / currentMatrixLen)],
+                                           mod);
 
-                coeffs[currentCol] = element1;
-                coeffs[currentCol + currentMatrixLen / 2] = element2;
+                    coeffs[currentCol] = (element1 + element2) % mod;
+                    coeffs[currentCol + currentMatrixLen / 2] =
+                            element1 >= element2 ? (element1 - element2) % mod : (mod + element1 - element2);
+                }
             }
         }
     }
 
-    for (auto &it: coeffs) {
-        it = modMultiply(it, NInv, mod);
+    void inverseNtt(vector<uint64_t> &coeffs, vector<uint64_t> &invRoots, uint64_t mod, uint64_t NInv) {
+        int N = coeffs.size();
+
+        for (int currentMatrixLen = N; currentMatrixLen >= 1; currentMatrixLen >>= 1) {
+            for (int currentMatrixStartCol = 0; currentMatrixStartCol < N; currentMatrixStartCol += currentMatrixLen) {
+                for (int currentCol = currentMatrixStartCol;
+                     currentCol < currentMatrixStartCol + currentMatrixLen / 2; ++currentCol) {
+                    uint64_t element1 =
+                            (coeffs[currentCol] + coeffs[currentCol + currentMatrixLen / 2]) % mod;
+                    uint64_t element2 = coeffs[currentCol] >= coeffs[currentCol + currentMatrixLen / 2] ?
+                                        (coeffs[currentCol] - coeffs[currentCol + currentMatrixLen / 2]) % mod :
+                                        (mod + coeffs[currentCol] - coeffs[currentCol + currentMatrixLen / 2]);
+                    element2 = modMultiply(element2,
+                                           invRoots[(currentCol - currentMatrixStartCol) * (N / currentMatrixLen)],
+                                           mod);
+
+                    coeffs[currentCol] = element1;
+                    coeffs[currentCol + currentMatrixLen / 2] = element2;
+                }
+            }
+        }
+
+        for (auto &it: coeffs) {
+            it = modMultiply(it, NInv, mod);
+        }
+        bitReverse(coeffs);
     }
-    bitReverse(coeffs);
-}
 
-void convolute(vector<uint64_t> &values, vector<uint64_t> &psi, uint64_t mod) {
-    for (int index = 0; index < psi.size(); ++index) {
-        values[index] = modMultiply(values[index], psi[index], mod);
+    void convolute(vector<uint64_t> &values, vector<uint64_t> &psi, uint64_t mod) {
+        for (int index = 0; index < psi.size(); ++index) {
+            values[index] = modMultiply(values[index], psi[index], mod);
+        }
     }
-}
 
-void invConvolute(vector<uint64_t> &values, vector<uint64_t> &psiInv, uint64_t mod) {
-    for (int index = 0; index < psiInv.size(); ++index) {
-        values[index] = modMultiply(values[index], psiInv[index], mod);
+    void invConvolute(vector<uint64_t> &values, vector<uint64_t> &psiInv, uint64_t mod) {
+        for (int index = 0; index < psiInv.size(); ++index) {
+            values[index] = modMultiply(values[index], psiInv[index], mod);
+        }
     }
-}
 
-void NTTTransformer::toNTT(Polynomial<uint64_t> &poly, int level) {
-    if (poly.isTransformedToNTT()) {
-        return;
+    void NTTTransformer::toNTT(Polynomial<uint64_t> &poly, int level) {
+        if (poly.isTransformedToNTT()) {
+            return;
+        }
+        convolute(poly.getCoeffs(), psi[level], primes[level]);
+        ntt(poly.getCoeffs(), rootPowers[level], primes[level]);
+
+        poly.setTransformedToNTT(true);
     }
-    convolute(poly.getCoeffs(), psi[level], primes[level]);
-    ntt(poly.getCoeffs(), rootPowers[level], primes[level]);
 
-    poly.setTransformedToNTT(true);
-}
+    void NTTTransformer::fromNTT(Polynomial<uint64_t> &poly, int level) {
+        if (!poly.isTransformedToNTT()) {
+            return;
+        }
+        inverseNtt(poly.getCoeffs(), inverseRootPowers[level], primes[level], NInvs[level]);
+        invConvolute(poly.getCoeffs(), psiInverse[level], primes[level]);
 
-void NTTTransformer::fromNTT(Polynomial<uint64_t> &poly, int level) {
-    if (!poly.isTransformedToNTT()) {
-        return;
+        poly.setTransformedToNTT(false);
     }
-    inverseNtt(poly.getCoeffs(), inverseRootPowers[level], primes[level], NInvs[level]);
-    invConvolute(poly.getCoeffs(), psiInverse[level], primes[level]);
 
-    poly.setTransformedToNTT(false);
-}
-
-uint64_t NTTTransformer::getPrime(int level) {
-    return primes[level];
+    uint64_t NTTTransformer::getPrime(int level) {
+        return primes[level];
+    }
 }

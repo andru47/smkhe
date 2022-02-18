@@ -4,8 +4,10 @@
 #ifndef SMKHE_SERIALIZER_UTIL_H
 #define SMKHE_SERIALIZER_UTIL_H
 
-PolynomialSerializer serializePolynomial(Polynomial<uint64_t> &givenPolynomial);
+namespace smkhe {
+    PolynomialSerializer serializePolynomial(Polynomial<uint64_t> &givenPolynomial);
 
-void parsePolynomial(const PolynomialSerializer &givenSerializer, Polynomial<uint64_t> &givenPolynomial);
+    void parsePolynomial(const PolynomialSerializer &givenSerializer, Polynomial<uint64_t> &givenPolynomial);
+}
 
 #endif //SMKHE_SERIALIZER_UTIL_H

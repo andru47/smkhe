@@ -5,23 +5,25 @@
 #ifndef SMKHE_PUBLIC_KEY_H
 #define SMKHE_PUBLIC_KEY_H
 
-class PublicKey {
-    vector<Polynomial<uint64_t>> polyA, polyB;
+namespace smkhe {
+    class PublicKey {
+        vector<Polynomial<uint64_t>> polyA, polyB;
 
-public:
-    PublicKey(vector<Polynomial<uint64_t>> polyA, vector<Polynomial<uint64_t>> polyB);
+    public:
+        PublicKey(vector<Polynomial<uint64_t>> polyA, vector<Polynomial<uint64_t>> polyB);
 
-    PublicKey();
+        PublicKey();
 
-    int getLevels();
+        int getLevels();
 
-    Polynomial<uint64_t> getA(int level);
+        Polynomial<uint64_t> getA(int level);
 
-    Polynomial<uint64_t> getB(int level);
+        Polynomial<uint64_t> getB(int level);
 
-    void serialize(string &givenString);
+        void serialize(string &givenString);
 
-    void deserialize(string &givenString);
-};
+        void deserialize(string &givenString);
+    };
+}
 
 #endif //SMKHE_PUBLIC_KEY_H

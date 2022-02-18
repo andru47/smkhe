@@ -9,6 +9,7 @@
 #define MULT_NUMBER_COEFFS 2048
 
 using namespace std;
+using namespace smkhe;
 
 vector<uint64_t> predefinedBigPrimes = {1152921504606748673, 576460752308273153, 576460752302473217,
                                         576460752304439297};

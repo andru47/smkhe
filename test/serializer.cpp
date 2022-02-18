@@ -8,6 +8,7 @@
 #define SPECIAL_PRIMES {0x7fffffffe0001, 0x80000001c0001, 0x80000002c0001, 0x7ffffffd20001}
 
 using namespace std;
+using namespace smkhe;
 
 Parameters serializerParams(1ULL << 59, 16384, PRIMES, SPECIAL_PRIMES);
 Keygen serializerKeygen(serializerParams);

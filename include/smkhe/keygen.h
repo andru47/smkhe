@@ -8,23 +8,25 @@
 #ifndef SMKHE_KEYGEN_H
 #define SMKHE_KEYGEN_H
 
-class Keygen {
-    Parameters params;
-    SecretKey secretKey;
-    bool secretKeyAttached = false;
+namespace smkhe {
+    class Keygen {
+        Parameters params;
+        SecretKey secretKey;
+        bool secretKeyAttached = false;
 
-public:
-    Keygen(Parameters params);
+    public:
+        Keygen(Parameters params);
 
-    Keygen(Parameters params, SecretKey secretKey);
+        Keygen(Parameters params, SecretKey secretKey);
 
-    bool isSecretKeyAttached();
+        bool isSecretKeyAttached();
 
-    SecretKey generateSecretKey();
+        SecretKey generateSecretKey();
 
-    PublicKey generatePublicKey();
+        PublicKey generatePublicKey();
 
-    EvaluationKey generateEvaluationKey();
-};
+        EvaluationKey generateEvaluationKey();
+    };
+}
 
 #endif //SMKHE_KEYGEN_H
