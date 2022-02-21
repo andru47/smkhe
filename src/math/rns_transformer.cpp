@@ -118,4 +118,53 @@ namespace smkhe {
 
         return result;
     }
+
+    vector<Polynomial<uint64_t>>
+    RNSTransformer::raisePolys(vector<Polynomial<uint64_t>> polys, NTTTransformer transformerQ,
+                               NTTTransformer transformerP) {
+        int levels = polys.size();
+        vector<Polynomial<uint64_t>> result;
+        vector<vector<uint64_t>> coeffs;
+        for (int i = 0; i < polys.size(); ++i) {
+            transformerQ.fromNTT(polys[i], i);
+            coeffs.push_back(polys[i].getCoeffs());
+        }
+        coeffs = modUp(coeffs);
+        int levelsP = coeffs.size() - levels;
+        for (int i = 0; i < coeffs.size(); ++i) {
+            Polynomial<uint64_t> newPoly(coeffs[i].size());
+            newPoly.setCoeffs(coeffs[i]);
+            if (i < levelsP) {
+                transformerP.toNTT(newPoly, i);
+            } else {
+                transformerQ.toNTT(newPoly, i - levelsP);
+            }
+            result.push_back(newPoly);
+        }
+        return result;
+    }
+
+    vector<Polynomial<uint64_t>>
+    RNSTransformer::downPolys(vector<Polynomial<uint64_t>> polys, NTTTransformer transformerQ,
+                              NTTTransformer transformerP, int numberPrimesP) {
+        vector<vector<uint64_t>> coeffs;
+        for (int i = 0; i < polys.size(); ++i) {
+            if (i < numberPrimesP) {
+                transformerP.fromNTT(polys[i], i);
+            } else {
+                transformerQ.fromNTT(polys[i], i - numberPrimesP);
+            }
+            coeffs.push_back(polys[i].getCoeffs());
+        }
+        coeffs = modDown(coeffs);
+        vector<Polynomial<uint64_t>> result;
+        for (int i = 0; i < coeffs.size(); ++i) {
+            Polynomial<uint64_t> newPoly(coeffs[i].size());
+            newPoly.setCoeffs(coeffs[i]);
+            transformerQ.toNTT(newPoly, i);
+            result.push_back(newPoly);
+        }
+
+        return result;
+    }
 }

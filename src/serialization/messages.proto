@@ -1,9 +1,28 @@
 syntax = "proto3";
 
-message DoubleVectorUintSerializer {
+message DoubleVectorPolynomial {
   int32 N = 1;
   int32 M = 2;
-  repeated uint64 numbers = 3[packed = true];
+  repeated PolynomialSerializer numbers = 3;
+}
+
+message MKCiphertextSerializer {
+  DoubleVectorPolynomial ciphers = 1;
+  int32 level = 2;
+  repeated uint64 ids = 3[packed = true];
+}
+
+message MKEvaluationKeySerializer {
+  repeated PolynomialSerializer d0P = 1;
+  repeated PolynomialSerializer d0Q = 2;
+  repeated PolynomialSerializer d1P = 3;
+  repeated PolynomialSerializer d1Q = 4;
+  repeated PolynomialSerializer d2P = 5;
+  repeated PolynomialSerializer d2Q = 6;
+}
+
+message PartialCiphertextSerializer {
+  repeated PolynomialSerializer partiallyDecrypted = 1;
 }
 
 message PolynomialSerializer {
