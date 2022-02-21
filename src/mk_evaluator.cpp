@@ -1,6 +1,6 @@
 #include "smkhe/mk_evaluator.h"
 #include <set>
-
+#include <algorithm>
 
 namespace smkhe {
     MKEvaluator::MKEvaluator(Parameters &params, unordered_map<uint64_t, MKPublicKey> &publicKeys,
