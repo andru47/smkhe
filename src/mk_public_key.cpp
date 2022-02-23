@@ -73,4 +73,12 @@ namespace smkhe {
             parsePolynomial(serializer.bq(index), polyBQ[index]);
         }
     }
+
+    int MKPublicKey::getLevelsQ() {
+        return polyAQ.size();
+    }
+
+    int MKPublicKey::getLevelsP() {
+        return polyAP.size();
+    }
 }

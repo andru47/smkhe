@@ -27,6 +27,10 @@ namespace smkhe {
         void serialize(string &resultedString);
 
         void deserialize(string &givenString);
+
+        int getLevelsQ();
+
+        int getLevelsP();
     };
 }
 
