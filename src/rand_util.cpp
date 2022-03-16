@@ -8,6 +8,12 @@ namespace smkhe {
         return distribution(generator);
     }
 
+    uint64_t getRandomWithSeed(uint64_t end, uint64_t seed) {
+        mt19937 generator(seed);
+        uniform_int_distribution<uint64_t> distribution(0, end);
+        return distribution(generator);
+    }
+
     long long getRandomError() {
         static random_device rd;
         static mt19937 generator(rd());
@@ -100,6 +106,33 @@ namespace smkhe {
                     uint64_t modGeneratedP = !generated ? (specialPrimes[level] - 1) : generated;
                     polyP[level].setCoeff(position, modGeneratedP);
                 }
+            }
+        }
+    }
+
+    void sampleSingleErrorAndAdd(Polynomial<uint64_t>& poly, int level, Parameters& givenParams) {
+        Polynomial<uint64_t> errorPoly(poly.getDegree());
+        for (int index = 0; index < poly.getDegree(); ++index) {
+            long long error = getRandomError();
+            uint64_t positiveError = error < 0 ? (error + givenParams.getModulus(level)) : error;
+            positiveError %= givenParams.getModulus(level);
+            errorPoly.setCoeff(index, positiveError);
+        }
+        givenParams.getTransformerQ().toNTT(errorPoly, level);
+        poly.add(errorPoly, givenParams.getModulus(level));
+    }
+
+    void sampleDoublePolynomialWithSeed(vector<Polynomial<uint64_t>> &polyQ, vector<Polynomial<uint64_t>> &polyP,
+                                        vector<uint64_t> &primesQ, vector<uint64_t> &primesP, uint64_t seed) {
+        for (int i = 0; i < polyQ[0].getDegree(); ++i) {
+            uint64_t generated = getRandomWithSeed(primesQ.back() - 1, seed);
+            for (int level = 0; level < primesQ.size(); ++level) {
+                uint64_t modGenerated = generated % primesQ[level];
+                polyQ[level].setCoeff(i, modGenerated);
+            }
+            for (int level = 0; level < primesP.size(); ++level) {
+                uint64_t modGenerated = generated % primesP[level];
+                polyP[level].setCoeff(i, modGenerated);
             }
         }
     }

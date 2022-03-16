@@ -177,6 +177,12 @@ namespace smkhe {
                 coeffs[index] %= mod;
             }
         }
+
+        void negate(uint64_t mod) {
+            for (int index = 0; index < degree; ++index) {
+                coeffs[index] = mod - coeffs[index];
+            }
+        }
     };
 }
 

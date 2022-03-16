@@ -1,6 +1,7 @@
 #include "smkhe/util.h"
 #include "smkhe/math/polynomial.h"
 #include "smkhe/math/ntt_transformer.h"
+#include "smkhe/parameters.h"
 #include <random>
 
 #ifndef SMKHE_RAND_UTIL_H
@@ -24,6 +25,11 @@ namespace smkhe {
     void sampleDoubleErrorAndAdd(vector<Polynomial<uint64_t>> &polyQ, vector<Polynomial<uint64_t>> &polyP,
                                  vector<uint64_t> &primesQ, vector<uint64_t> &primesP, NTTTransformer &transformerQ,
                                  NTTTransformer &transformerP);
+
+    void sampleSingleErrorAndAdd(Polynomial<uint64_t>& poly, int level, Parameters& givenParams);
+
+    void sampleDoublePolynomialWithSeed(vector<Polynomial<uint64_t>> &polyQ, vector<Polynomial<uint64_t>> &polyP,
+                                vector<uint64_t> &primesQ, vector<uint64_t> &primesP, uint64_t seed);
 }
 
 #endif //SMKHE_RAND_UTIL_H

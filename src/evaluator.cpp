@@ -5,55 +5,6 @@ namespace smkhe {
                                                                  rnsTransformer(params.getSpecialPrimes(),
                                                                                 params.getPrimes()) {}
 
-    vector<Polynomial<uint64_t>>
-    raisePolys(vector<Polynomial<uint64_t>> polys, RNSTransformer &transformer, NTTTransformer transformerQ,
-               NTTTransformer transformerP) {
-        int levels = polys.size();
-        vector<Polynomial<uint64_t>> result;
-        vector<vector<uint64_t>> coeffs;
-        for (int i = 0; i < polys.size(); ++i) {
-            transformerQ.fromNTT(polys[i], i);
-            coeffs.push_back(polys[i].getCoeffs());
-        }
-        coeffs = transformer.modUp(coeffs);
-        int levelsP = coeffs.size() - levels;
-        for (int i = 0; i < coeffs.size(); ++i) {
-            Polynomial<uint64_t> newPoly(coeffs[i].size());
-            newPoly.setCoeffs(coeffs[i]);
-            if (i < levelsP) {
-                transformerP.toNTT(newPoly, i);
-            } else {
-                transformerQ.toNTT(newPoly, i - levelsP);
-            }
-            result.push_back(newPoly);
-        }
-        return result;
-    }
-
-    vector<Polynomial<uint64_t>>
-    downPolys(vector<Polynomial<uint64_t>> polys, RNSTransformer &transformer, NTTTransformer transformerQ,
-              NTTTransformer transformerP, int primesP) {
-        vector<vector<uint64_t>> coeffs;
-        for (int i = 0; i < polys.size(); ++i) {
-            if (i < primesP) {
-                transformerP.fromNTT(polys[i], i);
-            } else {
-                transformerQ.fromNTT(polys[i], i - primesP);
-            }
-            coeffs.push_back(polys[i].getCoeffs());
-        }
-        coeffs = transformer.modDown(coeffs);
-        vector<Polynomial<uint64_t>> result;
-        for (int i = 0; i < coeffs.size(); ++i) {
-            Polynomial<uint64_t> newPoly(coeffs[i].size());
-            newPoly.setCoeffs(coeffs[i]);
-            transformerQ.toNTT(newPoly, i);
-            result.push_back(newPoly);
-        }
-
-        return result;
-    }
-
     void Evaluator::rescaleInPlace(Ciphertext &cipher) {
         int newLevel = cipher.getLevel() - 1;
         params.getTransformerQ().fromNTT(cipher.getPolyA(cipher.getLevel()), cipher.getLevel());
@@ -80,7 +31,7 @@ namespace smkhe {
     void Evaluator::multiplyRelinInPlace(Ciphertext &cipherA, Ciphertext &cipherB) {
         int minLevel = min(cipherA.getLevel(), cipherB.getLevel());
         if (minLevel == 0) {
-            throw ("There are no levels remaining for relinearization");
+            throw ("There are no levels remaining for rescaling.");
         }
 
         cipherA.decreaseLevel(cipherA.getLevel() - minLevel);
@@ -105,7 +56,7 @@ namespace smkhe {
         for (int i = 0; i < bxbx.size(); ++i) {
             bxbx[i].multiply(cipherB.getPolyA(i), params.getPrimes()[i]);
         }
-        vector<Polynomial<uint64_t>> axraised = raisePolys(axax, rnsTransformer, params.getTransformerQ(),
+        vector<Polynomial<uint64_t>> axraised = rnsTransformer.raisePolys(axax, params.getTransformerQ(),
                                                            params.getTransformerP());
         vector<Polynomial<uint64_t>> axmult;
         for (int i = 0; i < axraised.size(); ++i) {
@@ -127,9 +78,9 @@ namespace smkhe {
                                    params.getPrimes()[i - params.getSpecialPrimesNumber()]);
             }
         }
-        axmult = downPolys(axmult, rnsTransformer, params.getTransformerQ(), params.getTransformerP(),
+        axmult = rnsTransformer.downPolys(axmult, params.getTransformerQ(), params.getTransformerP(),
                            params.getSpecialPrimesNumber());
-        bxmult = downPolys(bxmult, rnsTransformer, params.getTransformerQ(), params.getTransformerP(),
+        bxmult = rnsTransformer.downPolys(bxmult, params.getTransformerQ(), params.getTransformerP(),
                            params.getSpecialPrimesNumber());
         for (int i = 0; i < axmult.size(); ++i) {
             axmult[i].add(axbx1[i], params.getPrimes()[i]);
@@ -189,12 +140,8 @@ namespace smkhe {
 
     void Evaluator::negateInPlace(Ciphertext &cipher) {
         for (int level = 0; level <= cipher.getLevel(); ++level) {
-            for (auto &coeff: cipher.getPolyA(level).getCoeffs()) {
-                coeff = params.getPrimes()[level] - coeff;
-            }
-            for (auto &coeff: cipher.getPolyB(level).getCoeffs()) {
-                coeff = params.getPrimes()[level] - coeff;
-            }
+            cipher.getPolyA(level).negate(params.getPrimes()[level]);
+            cipher.getPolyB(level).negate(params.getPrimes()[level]);
         }
     }
 }
