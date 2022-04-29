@@ -1,0 +1,23 @@
+name: Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup protoc
+      run: sudo apt install -y protobuf-compiler
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build
+
+    - name: Build
+      run: cd ${{github.workspace}}/build && make -j4
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ./tests

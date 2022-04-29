@@ -160,7 +160,7 @@ namespace smkhe {
 
     Plaintext Encoder::encode(vector<complex<double>> toEncode) {
         if (toEncode.size() > parameters.getRingDegree() / 2) {
-            throw ("There are more values to encode than slots: can only encode parameters.getRingDegree() / 2");
+            throw runtime_error("There are more values to encode than slots: can only encode parameters.getRingDegree() / 2");
         }
 
         toEncode.resize(parameters.getRingDegree() / 2, complex<double>(0, 0));
