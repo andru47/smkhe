@@ -31,7 +31,7 @@ Protobuf needs to be built firstly. Using their source code, we can generate a b
 ### Android
 1. Using the details from [here](https://developer.android.com/ndk/guides/cmake#usage), we can build the `Protobuf` binary using CMake
 2. Modify the `PROTOBUF_LIB` variable from line 6 of the [CMakeLists file](cmake/CMakeLists.txt) to point to the binary
-3. Similarly to 3, build the ``smkhe`` binary using CMake
+3. Similarly to 1, build the ``smkhe`` binary using CMake
 
 # References
 
