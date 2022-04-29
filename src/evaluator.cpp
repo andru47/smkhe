@@ -31,7 +31,7 @@ namespace smkhe {
     void Evaluator::multiplyRelinInPlace(Ciphertext &cipherA, Ciphertext &cipherB) {
         int minLevel = min(cipherA.getLevel(), cipherB.getLevel());
         if (minLevel == 0) {
-            throw ("There are no levels remaining for rescaling.");
+            throw runtime_error("There are no levels remaining for rescaling.");
         }
 
         cipherA.decreaseLevel(cipherA.getLevel() - minLevel);
@@ -96,7 +96,7 @@ namespace smkhe {
     void Evaluator::multiplyPlainInPlace(Ciphertext &cipher, Plaintext &plaintext) {
         int minLevel = min(cipher.getLevel(), plaintext.getLevel());
         if (minLevel == 0) {
-            throw ("There are no levels remaining for relinearization");
+            throw runtime_error("There are no levels remaining for rescaling");
         }
 
         cipher.decreaseLevel(cipher.getLevel() - minLevel);

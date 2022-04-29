@@ -37,7 +37,7 @@ namespace smkhe {
             return;
         }
         if (howMany > currentLevel + 1) {
-            throw ("Cannot decrease more levels than remaining");
+            throw runtime_error("Cannot decrease more levels than remaining");
         }
         currentLevel -= howMany;
         while (howMany--) {

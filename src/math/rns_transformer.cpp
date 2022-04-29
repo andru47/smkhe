@@ -69,7 +69,7 @@ namespace smkhe {
 
     vector<vector<uint64_t>> RNSTransformer::modUp(vector<vector<uint64_t>> &vectorInQBasis) {
         if (vectorInQBasis.size() > numberPrimesQ) {
-            throw ("Q basis from vector does not match Q basis from RNSTransformer");
+            throw runtime_error("Q basis from vector does not match Q basis from RNSTransformer");
         }
 
         vector<vector<uint64_t>> result(numberPrimesP);

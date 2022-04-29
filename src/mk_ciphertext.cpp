@@ -7,7 +7,7 @@ namespace smkhe {
 
     vector<Polynomial<uint64_t>> &MKCiphertext::getCipherForIndex(int index) {
         if (index >= ciphers.size()) {
-            throw ("Index is out of ciphers range.");
+            throw runtime_error("Index is out of ciphers range.");
         }
         return ciphers[index];
     }
@@ -22,7 +22,7 @@ namespace smkhe {
     void MKCiphertext::decreaseLevel(int howMany) {
         for (auto &cipher: ciphers) {
             if (howMany >= cipher.size()) {
-                throw ("Cannot decrease more levels than available.");
+                throw runtime_error("Cannot decrease more levels than available.");
             }
             for (int i = 0; i < howMany; ++i) {
                 cipher.pop_back();

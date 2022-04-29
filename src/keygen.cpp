@@ -46,7 +46,7 @@ namespace smkhe {
 
     PublicKey Keygen::generatePublicKey() {
         if (!secretKeyAttached) {
-            throw ("Cant generate without a secret key. Create or attach one first.");
+            throw runtime_error("Cant generate without a secret key. Create or attach one first.");
         }
         vector<Polynomial<uint64_t>> polyA(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree())),
                 polyB(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree()));

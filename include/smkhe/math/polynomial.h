@@ -15,7 +15,7 @@ namespace smkhe {
     public:
         Polynomial(int degree, vector<T> givenCoeffs) : degree(degree), coeffs(givenCoeffs) {
             if (degree != givenCoeffs.size()) {
-                throw ("Degree not equal to vector size");
+                throw runtime_error("Degree not equal to vector size");
             }
         }
 
@@ -49,7 +49,7 @@ namespace smkhe {
 
         T getCoeff(int index) {
             if (index >= degree) {
-                throw ("Index out of bounds");
+                throw runtime_error("Index out of bounds");
             }
             return coeffs[index];
         }
@@ -139,10 +139,10 @@ namespace smkhe {
 
         void multiply(Polynomial<T> &other, uint64_t mod) {
             if (!transformedToNTT || !other.transformedToNTT) {
-                throw ("Both polynomials need to be transformed to NTT.");
+                throw runtime_error("Both polynomials need to be transformed to NTT.");
             }
             if (degree != other.degree) {
-                throw ("Both polynomials need to have the same degree.");
+                throw runtime_error("Both polynomials need to have the same degree.");
             }
             for (int index = 0; index < degree; ++index) {
                 coeffs[index] = modMultiply(coeffs[index], other.coeffs[index], mod);
@@ -151,10 +151,10 @@ namespace smkhe {
 
         void add(Polynomial<uint64_t> &other, uint64_t mod) {
             if (!transformedToNTT || !other.transformedToNTT) {
-                throw ("Both polynomials need to be transformed to NTT.");
+                throw runtime_error("Both polynomials need to be transformed to NTT.");
             }
             if (degree != other.degree) {
-                throw ("Both polynomials need to have the same degree.");
+                throw runtime_error("Both polynomials need to have the same degree.");
             }
             for (int index = 0; index < degree; ++index) {
                 coeffs[index] = modAdd(coeffs[index], other.coeffs[index], mod);
@@ -163,10 +163,10 @@ namespace smkhe {
 
         void sub(Polynomial<uint64_t> &other, uint64_t mod) {
             if (!transformedToNTT || !other.transformedToNTT) {
-                throw ("Both polynomials need to be transformed to NTT.");
+                throw runtime_error("Both polynomials need to be transformed to NTT.");
             }
             if (degree != other.degree) {
-                throw ("Both polynomials need to have the same degree.");
+                throw runtime_error("Both polynomials need to have the same degree.");
             }
             for (int index = 0; index < degree; ++index) {
                 if (other.coeffs[index] <= coeffs[index]) {

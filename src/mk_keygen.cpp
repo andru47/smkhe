@@ -34,7 +34,7 @@ namespace smkhe {
 
     MKPublicKey MKKeygen::generatePublicKey() {
         if (!isSecretAttached) {
-            throw ("Cant generate without a secret key. Create or attach one first.");
+            throw runtime_error("Cant generate without a secret key. Create or attach one first.");
         }
         vector<Polynomial<uint64_t>> polyAQ(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree())),
                 polyBQ(params.getModulusLevels(), Polynomial<uint64_t>(params.getRingDegree())),
@@ -70,7 +70,7 @@ namespace smkhe {
 
     MKEvaluationKey MKKeygen::generateEvaluationKey(MKPublicKey &publicKey) {
         if (!isSecretAttached) {
-            throw ("Cant generate without a secret key. Create or attach one first.");
+            throw runtime_error("Cant generate without a secret key. Create or attach one first.");
         }
 
         vector<Polynomial<uint64_t>> d0P(params.getSpecialPrimesNumber(),

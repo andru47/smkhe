@@ -195,7 +195,7 @@ namespace smkhe {
 
     void MKEvaluator::rescaleInPlace(MKCiphertext &cipher) {
         if (cipher.getLevel() < 1) {
-            throw ("There are no levels remaining for rescaling.");
+            throw runtime_error("There are no levels remaining for rescaling.");
         }
         for (int index = 0; index <= cipher.getIds().size(); ++index) {
             params.getTransformerQ().fromNTT(cipher.getCipherForIndex(index).back(), cipher.getLevel());
@@ -228,7 +228,7 @@ namespace smkhe {
     void MKEvaluator::multiplyPlainInPlace(MKCiphertext &cipher, Plaintext &plain) {
         int minLevel = min(cipher.getLevel(), plain.getLevel());
         if (minLevel == 0) {
-            throw ("There are no levels remaining for relinearization");
+            throw runtime_error("There are no levels remaining for relinearization");
         }
 
         cipher.decreaseLevel(cipher.getLevel() - minLevel);
