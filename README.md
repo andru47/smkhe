@@ -2,7 +2,7 @@
 
 This C++ library implements the Full-RNS CKKS Homomorphic Encryption scheme.
 Apart from the basic use-case of CKKS, the library also implements the multi-key variant explained in this [paper](https://eprint.iacr.org/2019/524.pdf). The library doesn't implement Galois keys and can be used as a reference for future C++ multi-key CKKS libraries.
-The library was created as part of final-year university project in order to compare with existing HE libraries while using [HE for contact tracing]().
+The library was created as part of final-year university project in order to compare with existing HE libraries while using [HE for contact tracing](https://github.com/andru47/contact-tracing-he).
 
 :warning: It is an experimental library and should not be used in production.
 
