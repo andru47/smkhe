@@ -9,6 +9,7 @@
 #define SEED 1231121
 #define PRIMES {1152921504606748673, 576460752308273153, 576460752302473217}
 #define SPECIAL_PRIMES {0x7fffffffe0001, 0x80000001c0001, 0x80000002c0001, 0x7ffffffd20001}
+
 using namespace std;
 using namespace smkhe;
 
@@ -129,3 +130,4 @@ TEST(Evaluator, Negate) {
         ASSERT_NEAR(-numbers[index], computedNumbers[index].real(), 1e-8);
     }
 }
+

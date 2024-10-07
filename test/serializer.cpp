@@ -6,7 +6,6 @@
 #include "smkhe/mk_keygen.h"
 #include "smkhe/mk_ciphertext.h"
 #include "smkhe/mk_public_key.h"
-#include "smkhe/mk_ciphertext.h"
 #include "smkhe/mk_decryptor.h"
 
 #define PRIMES {1152921504606748673, 576460752308273153, 576460752302473217}
@@ -178,7 +177,7 @@ TEST(Serializer, MKPartialCiphertext) {
     string serializedString;
     partialCiphertext.serialize(serializedString);
 
-    PartialCiphertext otherCipher;
+PartialCiphertext otherCipher;
     otherCipher.deserialize(serializedString);
 
     ASSERT_EQ(partialCiphertext.getPolynomial().size(), otherCipher.getPolynomial().size());
@@ -187,3 +186,4 @@ TEST(Serializer, MKPartialCiphertext) {
         ASSERT_EQ(partialCiphertext.getPolynomial()[index].getCoeffs(), otherCipher.getPolynomial()[index].getCoeffs());
     }
 }
+

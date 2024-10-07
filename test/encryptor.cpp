@@ -2,6 +2,7 @@
 #include "smkhe/encoder.h"
 #include "smkhe/encryptor.h"
 #include "smkhe/keygen.h"
+#include "smkhe/mk_keygen.h"
 #include <random>
 
 #define SEED 9993211
@@ -10,12 +11,15 @@ using namespace std;
 using namespace smkhe;
 
 Parameters parameters(pow(2.0, 40), 16384, {BIG_PRIME}, {BIG_PRIME});
-Encoder enc(parameters);
-Encryptor encryptor(parameters);
-Keygen keygen(parameters);
-SecretKey secretKey = keygen.generateSecretKey();
-PublicKey publicKey = keygen.generatePublicKey();
 
+// Provide a seed to MKKeygen constructor
+MKKeygen keygen(parameters, SEED); 
+SecretKey secretKey = keygen.generateSecretKey();
+MKPublicKey mkPublicKey = keygen.generatePublicKey();
+PublicKey publicKey = mkPublicKey.getPublicKey();  // Convert MKPublicKey to PublicKey
+
+Encryptor encryptor(parameters);
+Encoder enc(parameters);
 
 vector<double> generateDoublesEncryptor(int number) {
     vector<double> result(number);
@@ -60,3 +64,4 @@ TEST(Encryptor, EncryptSumDecrypt) {
         ASSERT_NEAR(numbers1[index] + numbers2[index], newNumbers[index].real(), 1e-6);
     }
 }
+
